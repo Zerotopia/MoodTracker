@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
     //We use SharedPreferences variable for history activity
     private SharedPreferences mPreferences;
 
-    //public static final String DAYS
+    public static final String[] DAYS = {"DAY0","DAY1","DAY2","DAY3","DAY4","DAY5","DAY6"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

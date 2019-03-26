@@ -9,6 +9,7 @@ import com.example.moodtracker.R;
 public class HistoryActivity extends AppCompatActivity {
 
     private RecyclerView historyRecyclerView;
+    private RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +17,9 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         historyRecyclerView = (RecyclerView) findViewById(R.id.activity_history_recycler_view);
+
+        mAdapter = new HistoryAdapter()
+
 
     }
 }

@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:layout_weight="1"
+    android:orientation="horizontal"
     >
 
     <TextView
         android:id="@+id/history_row_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-
+        android:layout_gravity="top"
         />
 
     <ImageView
         android:id="@+id/history_row_png"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_gravity="end"
+        />
 
-</RelativeLayout>
+</LinearLayout>

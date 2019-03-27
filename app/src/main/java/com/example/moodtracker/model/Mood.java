@@ -26,6 +26,15 @@ public class Mood {
         mIdMood = idMood;
     }
 
+    public Mood(int idMood, String note) {
+        mIdMood = idMood;
+        mNote = note;
+    }
+
+    public String getNote() {
+        return mNote;
+    }
+
     public int Smiley () {
         switch (mIdMood) {
             case SAD:
@@ -61,7 +70,7 @@ public class Mood {
         }
     }
 
-    public double Scale () {
-        return mIdMood / 5.0;
+    public float Weight () {
+        return (float) mIdMood;
     }
 }

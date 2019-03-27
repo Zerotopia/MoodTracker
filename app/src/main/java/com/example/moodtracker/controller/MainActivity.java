@@ -15,7 +15,7 @@ import com.example.moodtracker.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private ImageView mImageMood;
+    private ImageView mImageMood;
 
     //We use SharedPreferences variable for history activity
     private SharedPreferences mPreferences;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // mImageMood = (ImageView) findViewById(R.id.activity_main_mood_imgw);
+        mImageMood = (ImageView) findViewById(R.id.activity_main_mood_imgw);
 
 
     }
@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickHistory(View view) {
-        // Intent historyActivity = new Intent(MainActivity.this,HistoryActivity.class);
-
+         Intent historyActivity = new Intent(MainActivity.this,HistoryActivity.class);
+         startActivity(historyActivity);
 
     }
 

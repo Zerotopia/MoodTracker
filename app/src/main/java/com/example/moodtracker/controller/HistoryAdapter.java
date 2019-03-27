@@ -23,7 +23,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         this.moodItems = moodItems;
     }
 
-    public static class  HistoryViewHolder extends RecyclerView.ViewHolder {
+    public static class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         TextView date;
         ImageView note;
@@ -38,7 +38,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @NonNull
     @Override
     public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.history_row,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.history_row, viewGroup, false);
         view.setBackgroundResource(moodItems.get(i).Color());
         view.getLayoutParams().width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * moodItems.get(i).Scale());
         return new HistoryViewHolder(view);
@@ -47,9 +47,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int i) {
-          Resources res = historyViewHolder.itemView.getResources();
-          historyViewHolder.date.setText(res.getStringArray(R.array.day_sentences)[i]);
-          historyViewHolder
+        Resources res = historyViewHolder.itemView.getResources();
+        historyViewHolder.date.setText(res.getStringArray(R.array.day_sentences)[i]);
+        if (moodItems.get(i).getNote() != null)
+            historyViewHolder.note.setImageResource(R.mipmap.ic_comment_black_48px);
 
     }
 

@@ -26,6 +26,15 @@ public class Mood {
         mIdMood = idMood;
     }
 
+    public Mood(@moodDef int idMood, String note) {
+        mIdMood = idMood;
+        mNote = note;
+    }
+
+    public String getNote() {
+        return mNote;
+    }
+
     public int Smiley () {
         switch (mIdMood) {
             case SAD:

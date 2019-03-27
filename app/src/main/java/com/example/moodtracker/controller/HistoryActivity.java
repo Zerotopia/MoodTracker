@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.moodtracker.R;
+import com.example.moodtracker.model.Mood;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -18,8 +22,21 @@ public class HistoryActivity extends AppCompatActivity {
 
         historyRecyclerView = (RecyclerView) findViewById(R.id.activity_history_recycler_view);
 
-        mAdapter = new HistoryAdapter()
+        mAdapter = new HistoryAdapter(moodItems());
+        historyRecyclerView.setAdapter(mAdapter);
 
 
+    }
+
+    private List<Mood> moodItems () {
+        List<Mood> l = new ArrayList<Mood>();
+        l.add(new Mood(Mood.SUPER_HAPPY));
+        l.add(new Mood(Mood.NORMAL,"comment1"));
+        l.add(new Mood(Mood.HAPPY));
+        l.add(new Mood(Mood.SUPER_HAPPY, "comment2"));
+        l.add(new Mood(Mood.DISAPPOINTED));
+        l.add(new Mood(Mood.SAD, "comment3"));
+        l.add(new Mood(Mood.HAPPY));
+        return l;
     }
 }

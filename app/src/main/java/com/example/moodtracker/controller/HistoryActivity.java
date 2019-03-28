@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,32 +41,36 @@ public class HistoryActivity extends AppCompatActivity {
 
         LayoutInflater inflater = this.getLayoutInflater();
 
-        for (int i = 0; i < moodItems().size(); i++) {
+        List<Mood> MoodItem = moodItems();
+        for (int i = 0; i < MoodItem.size(); i++) {
+            Log.d("testfor","On entre dans la boucle for" + i);
+            TableRow row = (TableRow) inflater.inflate(R.layout.history_row,null);
+           TableLayout.LayoutParams tlp = new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                   TableLayout.LayoutParams.MATCH_PARENT,
+                        1.0f);
+          row.setLayoutParams(tlp);
+          row.setWeightSum(5);
 
-            TableRow row = new TableRow(this);
-           /* TableRow.LayoutParams tlp = new TableRow.LayoutParams(
+          LinearLayout L = row.findViewById(R.id.rowlyt);
+
+            /*View rowLayout = inflater.inflate(R.layout.history_row, row,false); */
+            TableRow.LayoutParams llp = new TableRow.LayoutParams(
+                        0,
                         TableRow.LayoutParams.MATCH_PARENT,
-                        0,1.0f);
-            row.setLayoutParams(tlp);
-            */row.setWeightSum(5);
+                        MoodItem.get(i).Weight());
+            L.setLayoutParams(llp);
+            L.setBackgroundResource(MoodItem.get(i).Color());
 
-            LinearLayout rowLayout = (LinearLayout) inflater.inflate(R.layout.history_row, row,false);
-          /*  LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
-                    0,
-                    LinearLayout.LayoutParams.MATCH_PARENT,moodItems().get(i).Weight());
-            //System.out.println(moodItems().get(i).Weight());
-            rowLayout.setLayoutParams(llp);
-            */rowLayout.setBackgroundResource(moodItems().get(i).Color());
-
-            TextView date = (TextView) rowLayout.findViewById(R.id.history_row_txt);
+            TextView date = (TextView) row.findViewById(R.id.history_row_txt);
             date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
 
-            if (moodItems().get(i).getNote() != null) {
-                ImageView note = (ImageView) rowLayout.findViewById(R.id.history_row_png);
+            if (MoodItem.get(i).getNote() != null) {
+                ImageView note = (ImageView) row.findViewById(R.id.history_row_png);
                 note.setImageResource(R.mipmap.ic_comment_black_48px);
             }
 
-            row.addView(rowLayout);
+            //row.addView(rowLayout);
             mTableLayout.addView(row);
         }
     }

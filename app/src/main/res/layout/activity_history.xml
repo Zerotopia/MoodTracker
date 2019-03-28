@@ -5,6 +5,7 @@
     android:id="@+id/activity_history_table_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:weightSum="7"
     tools:context=".controller.HistoryActivity">
 </TableLayout>

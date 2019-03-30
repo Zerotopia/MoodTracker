@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.Mood;
@@ -40,34 +41,42 @@ public class HistoryActivity extends AppCompatActivity {
     private void displayTableLayout() {
 
         LayoutInflater inflater = this.getLayoutInflater();
+        final List<Mood> moodList = moodItems();
 
-        List<Mood> MoodItem = moodItems();
-        for (int i = 0; i < MoodItem.size(); i++) {
-            Log.d("testfor","On entre dans la boucle for" + i);
-            TableRow row = (TableRow) inflater.inflate(R.layout.history_row,null);
-           TableLayout.LayoutParams tlp = new TableLayout.LayoutParams(
-                        TableLayout.LayoutParams.MATCH_PARENT,
-                   TableLayout.LayoutParams.MATCH_PARENT,
-                        1.0f);
-          row.setLayoutParams(tlp);
-          row.setWeightSum(5);
+        for (int i = 0; i < moodList.size(); i++) {
 
-          LinearLayout L = row.findViewById(R.id.rowlyt);
+            Mood mood = moodList.get(i);
 
-            /*View rowLayout = inflater.inflate(R.layout.history_row, row,false); */
-            TableRow.LayoutParams llp = new TableRow.LayoutParams(
-                        0,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        MoodItem.get(i).Weight());
-            L.setLayoutParams(llp);
-            L.setBackgroundResource(MoodItem.get(i).Color());
+            TableRow row = (TableRow) inflater.inflate(R.layout.history_row, mTableLayout, false);
+            TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    1.0f);
+            row.setLayoutParams(rowLayoutParams);
+            row.setWeightSum(5);
+
+            LinearLayout rowLinearLayout = row.findViewById(R.id.history_row_linear_layout);
+            TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    mood.Weight());
+            rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
+            rowLinearLayout.setBackgroundResource(mood.Color());
 
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
             date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
 
-            if (MoodItem.get(i).getNote() != null) {
+            final String comment = mood.getNote();
+
+            if (comment != null) {
                 ImageView note = (ImageView) row.findViewById(R.id.history_row_png);
                 note.setImageResource(R.mipmap.ic_comment_black_48px);
+                rowLinearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(HistoryActivity.this, comment, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             //row.addView(rowLayout);
@@ -75,14 +84,14 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-    private List<Mood> moodItems () {
+    private List<Mood> moodItems() {
         List<Mood> l = new ArrayList<Mood>();
         l.add(new Mood(Mood.SUPER_HAPPY));
-        l.add(new Mood(Mood.NORMAL,"comment1"));
+        l.add(new Mood(Mood.NORMAL, "comment1"));
         l.add(new Mood(Mood.HAPPY));
         l.add(new Mood(Mood.SUPER_HAPPY, "comment2"));
         l.add(new Mood(Mood.DISAPPOINTED));
-        l.add(new Mood(Mood.SAD, "comment3"));
+        l.add(new Mood(Mood.SAD, "Il était une fois dans un cimetière lointain un grand chateau fort."));
         l.add(new Mood(Mood.HAPPY));
         return l;
     }

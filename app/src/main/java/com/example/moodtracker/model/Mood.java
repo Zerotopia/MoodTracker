@@ -7,70 +7,97 @@ import com.example.moodtracker.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class Mood {
+public enum Mood {
 
-    public final int mIdMood;
-    private String mNote = null;
+    SAD("SAD"),
+    DISAPPOINTED("DISAPPOINTED"),
+    NORMAL("NORMAL"),
+    HAPPY("HAPPY"),
+    SUPER_HAPPY("SUPER_HAPPY"),
+    MOOD_OBJECT("");
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SAD, DISAPPOINTED, NORMAL, HAPPY, SUPER_HAPPY})
-    public @interface moodDef {}
+    private String mIdMood;
+    //private String mNote = null;
 
-    public static final int SAD = 1;
-    public static final int DISAPPOINTED = 2;
-    public static final int NORMAL = 3;
-    public static final int HAPPY = 4;
-    public static final int SUPER_HAPPY = 5;
 
-    public Mood (@moodDef int idMood) {
+    @Override
+    public String toString() {
+        return mIdMood;
+    }
+
+    Mood(String idMood) {
         mIdMood = idMood;
     }
 
-    public Mood(int idMood, String note) {
-        mIdMood = idMood;
-        mNote = note;
+    public Mood parseMood(String idMood) {
+        if (idMood == null) return MOOD_OBJECT;
+        else {
+            switch (idMood) {
+                case "SAD":
+                    return SAD;
+                case "DISAPPOINTED":
+                    return DISAPPOINTED;
+                case "NORMAL":
+                    return NORMAL;
+                case "HAPPY":
+                    return HAPPY;
+                case "SUPER_HAPPY":
+                    return SUPER_HAPPY;
+                default:
+                    return MOOD_OBJECT;
+            }
+        }
+
     }
 
-    public String getNote() {
-        return mNote;
-    }
-
-    public int Smiley () {
+    public int Smiley() {
         switch (mIdMood) {
-            case SAD:
+            case "SAD":
                 return R.mipmap.smiley_sad;
-            case DISAPPOINTED:
+            case "DISAPPOINTED":
                 return R.mipmap.smiley_disappointed;
-            case NORMAL:
+            case "NORMAL":
                 return R.mipmap.smiley_normal;
-            case HAPPY:
+            case "HAPPY":
                 return R.mipmap.smiley_happy;
-            case SUPER_HAPPY:
+            case "SUPER_HAPPY":
                 return R.mipmap.smiley_super_happy;
             default:
                 return 0;
-
         }
     }
 
-    public int Color () {
+    public int Color() {
         switch (mIdMood) {
-            case SAD:
+            case "SAD":
                 return R.color.faded_red;
-            case DISAPPOINTED:
+            case "DISAPPOINTED":
                 return R.color.warm_grey;
-            case NORMAL:
+            case "NORMAL":
                 return R.color.cornflower_blue_65;
-            case HAPPY:
+            case "HAPPY":
                 return R.color.light_sage;
-            case SUPER_HAPPY:
+            case "SUPER_HAPPY":
                 return R.color.banana_yellow;
             default:
                 return 0;
         }
     }
 
-    public float Weight () {
-        return (float) mIdMood;
+    public float Weight() {
+        switch (mIdMood) {
+            case "SAD":
+                return 1;
+            case "DISAPPOINTED":
+                return 2;
+            case "NORMAL":
+                return 3;
+            case "HAPPY":
+                return 4;
+            case "SUPER_HAPPY":
+                return 5;
+            default:
+                return 0;
+        }
     }
 }

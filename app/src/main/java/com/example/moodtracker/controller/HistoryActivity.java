@@ -1,6 +1,9 @@
 package com.example.moodtracker.controller;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -21,12 +24,17 @@ import com.example.moodtracker.model.Mood;
 
 import org.w3c.dom.Text;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
 
     private TableLayout mTableLayout;
+    private SharedPreferences mPreferences;
+
+    private List<Mood> mMoodList = new ArrayList<>();
+    private List<String> mCommentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +42,23 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         mTableLayout = (TableLayout) findViewById(R.id.activity_history_table_layout);
-        displayTableLayout();
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        for (int i = 0; i < MainActivity.DAYS.length; i++)
+            mMoodList.add(Mood.MOOD_OBJECT.parseMood(mPreferences.getString(MainActivity.DAYS[i],
+                                                     "")));
+        for (int i = 0; i < MainActivity.NOTE.length; i++)
+            mCommentList.add(mPreferences.getString(MainActivity.NOTE[i], ""));
+
+        displayTableLayout();
     }
 
     private void displayTableLayout() {
 
         LayoutInflater inflater = this.getLayoutInflater();
-        final List<Mood> moodList = moodItems();
 
-        for (int i = 0; i < moodList.size(); i++) {
-
-            Mood mood = moodList.get(i);
+        for (int i = 0; i < mMoodList.size(); i++) {
+            Mood mood = mMoodList.get(i);
 
             TableRow row = (TableRow) inflater.inflate(R.layout.history_row, mTableLayout, false);
             TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(
@@ -66,9 +79,9 @@ public class HistoryActivity extends AppCompatActivity {
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
             date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
 
-            final String comment = mood.getNote();
+            final String comment = mCommentList.get(i);
 
-            if (comment != null) {
+            if (!comment.isEmpty()) {
                 ImageView note = (ImageView) row.findViewById(R.id.history_row_png);
                 note.setImageResource(R.mipmap.ic_comment_black_48px);
                 rowLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -78,21 +91,7 @@ public class HistoryActivity extends AppCompatActivity {
                     }
                 });
             }
-
-            //row.addView(rowLayout);
             mTableLayout.addView(row);
         }
-    }
-
-    private List<Mood> moodItems() {
-        List<Mood> l = new ArrayList<Mood>();
-        l.add(new Mood(Mood.SUPER_HAPPY));
-        l.add(new Mood(Mood.NORMAL, "comment1"));
-        l.add(new Mood(Mood.HAPPY));
-        l.add(new Mood(Mood.SUPER_HAPPY, "comment2"));
-        l.add(new Mood(Mood.DISAPPOINTED));
-        l.add(new Mood(Mood.SAD, "Il était une fois dans un cimetière lointain un grand chateau fort."));
-        l.add(new Mood(Mood.HAPPY));
-        return l;
     }
 }

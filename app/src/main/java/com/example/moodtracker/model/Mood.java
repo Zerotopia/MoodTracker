@@ -100,4 +100,40 @@ public enum Mood {
                 return 0;
         }
     }
+
+    public String Prev() {
+        switch (mIdMood) {
+            case "SAD":
+                return "SAD";
+            case "DISAPPOINTED":
+                return "SAD";
+            case "NORMAL":
+                return "DISAPPOINTED";
+            case "HAPPY":
+                return "NORMAL";
+            case "SUPER_HAPPY":
+                return "HAPPY";
+            default:
+                return "";
+        }
+    }
+
+    public String Next() {
+        switch (mIdMood) {
+            case "SAD":
+                return "DISAPPOINTED";
+            case "DISAPPOINTED":
+                return "NORMAL";
+            case "NORMAL":
+                return "HAPPY";
+            case "HAPPY":
+                return "SUPER_HAPPY";
+            case "SUPER_HAPPY":
+                return "SUPER_HAPPY";
+            default:
+                return "";
+        }
+    }
+
 }
+

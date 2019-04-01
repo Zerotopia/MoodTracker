@@ -8,18 +8,26 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.Mood;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private ImageView mImageMood;
+    private RelativeLayout mRelativeLayout;
+    private Mood mCurrentMood;
+
+    public static final int SWIPE_THRESHOLD = 100;
+    private float downY;
+    private float upY;
 
     //We use SharedPreferences variable for history activity
     private SharedPreferences mPreferences;
@@ -34,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mImageMood = (ImageView) findViewById(R.id.activity_main_mood_imgw);
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.activity_main_layout);
+        mRelativeLayout.setOnTouchListener(this);
+        mCurrentMood = Mood.HAPPY;
+        displayMood();
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 
@@ -48,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
         mPreferences.edit().putString(NOTE[1], "Hmmm, pourquoi pas").apply();
         mPreferences.edit().putString(NOTE[3], "Hmmm, Oichi, delicieuse ramen").apply();
         mPreferences.edit().putString(NOTE[5], "Super Pizza, super pizza cette pizza à la sauce tomate qui n'a jamais peur de rien.").apply();
-
-
     }
 
 
@@ -73,7 +84,33 @@ public class MainActivity extends AppCompatActivity {
     public void clickHistory(View view) {
         Intent historyActivity = new Intent(MainActivity.this, HistoryActivity.class);
         startActivity(historyActivity);
-
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downY = event.getY();
+                return true;
+            case MotionEvent.ACTION_UP:
+                upY = event.getY();
+                final float deltaY = downY - upY;
+                if (deltaY > SWIPE_THRESHOLD) {
+                    mCurrentMood = Mood.valueOf(mCurrentMood.Next());
+                    displayMood();
+                }
+                if (-deltaY > SWIPE_THRESHOLD) {
+                    mCurrentMood = Mood.valueOf(mCurrentMood.Prev());
+                    displayMood();
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    public void displayMood() {
+        mRelativeLayout.setBackgroundResource(mCurrentMood.Color());
+        mImageMood.setImageResource(mCurrentMood.Smiley());
+    }
 }

@@ -11,12 +11,15 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.Mood;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -29,12 +32,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private float downY;
     private float upY;
 
+    private String mComment = "";
+
     //We use SharedPreferences variable for history activity
     private SharedPreferences mPreferences;
-
+    private SharedPreferences.Editor mEditPreferences;
 
     public static final String[] DAYS = {"DAY0", "DAY1", "DAY2", "DAY3", "DAY4", "DAY5", "DAY6"};
     public static final String[] NOTE = {"NOTE0", "NOTE1", "NOTE2", "NOTE3", "NOTE4", "NOTE5", "NOTE6"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +54,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         displayMood();
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditPreferences = mPreferences.edit();
 
 
-        mPreferences.edit().putString(DAYS[0], Mood.SUPER_HAPPY.toString()).apply();
-        mPreferences.edit().putString(DAYS[1], Mood.NORMAL.toString()).apply();
-        mPreferences.edit().putString(DAYS[2], Mood.HAPPY.toString()).apply();
-        mPreferences.edit().putString(DAYS[3], Mood.SUPER_HAPPY.toString()).apply();
-        mPreferences.edit().putString(DAYS[4], Mood.DISAPPOINTED.toString()).apply();
-        mPreferences.edit().putString(DAYS[5], Mood.SAD.toString()).apply();
-        mPreferences.edit().putString(DAYS[6], Mood.HAPPY.toString()).apply();
+        mEditPreferences.putString(DAYS[0], Mood.SUPER_HAPPY.toString());
+        mEditPreferences.putString(DAYS[1], Mood.NORMAL.toString());
+        mEditPreferences.putString(DAYS[2], Mood.HAPPY.toString());
+        mEditPreferences.putString(DAYS[3], Mood.SUPER_HAPPY.toString());
+        mEditPreferences.putString(DAYS[4], Mood.DISAPPOINTED.toString());
+        mEditPreferences.putString(DAYS[5], Mood.SAD.toString());
+        mEditPreferences.putString(DAYS[6], Mood.HAPPY.toString());
 
-        mPreferences.edit().putString(NOTE[1], "Hmmm, pourquoi pas").apply();
-        mPreferences.edit().putString(NOTE[3], "Hmmm, Oichi, delicieuse ramen").apply();
-        mPreferences.edit().putString(NOTE[5], "Super Pizza, super pizza cette pizza à la sauce tomate qui n'a jamais peur de rien.").apply();
+        mEditPreferences.putString(NOTE[1], "Hmmm, pourquoi pas");
+        mEditPreferences.putString(NOTE[3], "Hmmm, Oichi, delicieuse ramen");
+        mEditPreferences.putString(NOTE[5], "Super Pizza, super pizza cette pizza à la sauce tomate qui n'a jamais peur de rien.");
+        mEditPreferences.apply();
     }
 
 
@@ -72,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //System.out.println(comentText.getText());
-                        // saved comment.
+                        mComment = comentText.getText().toString();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -98,14 +105,49 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 if (deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.Next());
                     displayMood();
+                    mComment = "";
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.Prev());
                     displayMood();
+                    mComment = "";
                 }
                 return true;
             default:
-                return true;
+                return false;
+        }
+    }
+
+    public void saveMood(int delay) {
+        if (delay < 0) {
+            AlertDialog.Builder warningDate = new AlertDialog.Builder(this);
+            warningDate.setTitle("Avertissement")
+                    .setMessage("Attention chagement de date manuelle")
+                    .setPositiveButton("Ok",null)
+                            //new DialogInterface.OnClickListener() {
+                        //@Override
+                        //public void onClick(DialogInterface dialog, int which) {
+                       //
+                       // }
+                    //})
+                    .create()
+                    .show();
+        } else if (0 < delay && delay <= DAYS.length) {
+            for (int i = 0; i < DAYS.length - delay; i++) {
+                mEditPreferences.putString(DAYS[i], mPreferences.getString(DAYS[i + delay], "")).apply();
+                mEditPreferences.remove(DAYS[i + delay]);
+                mEditPreferences.putString(NOTE[i], mPreferences.getString(NOTE[i + delay], "")).apply();
+                mEditPreferences.remove(NOTE[i + delay]);
+            }
+
+            mEditPreferences.putString(DAYS[DAYS.length - delay], mCurrentMood.toString()).apply();
+            mEditPreferences.putString(NOTE[DAYS.length - delay], mComment).apply();
+
+        } else if (delay > DAYS.length) {
+            for (int i = 0; i < DAYS.length; i++) {
+                mEditPreferences.remove(DAYS[i]);
+                mEditPreferences.remove(NOTE[i]);
+            }
         }
     }
 

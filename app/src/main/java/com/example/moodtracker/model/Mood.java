@@ -1,11 +1,6 @@
 package com.example.moodtracker.model;
 
-import android.support.annotation.IntDef;
-
 import com.example.moodtracker.R;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 public enum Mood {
 
@@ -17,8 +12,6 @@ public enum Mood {
     MOOD_OBJECT("");
 
     private String mIdMood;
-    //private String mNote = null;
-
 
     @Override
     public String toString() {
@@ -47,7 +40,6 @@ public enum Mood {
                     return MOOD_OBJECT;
             }
         }
-
     }
 
     public int Smiley() {
@@ -134,6 +126,5 @@ public enum Mood {
                 return "";
         }
     }
-
 }
 

@@ -3,23 +3,19 @@ package com.example.moodtracker.controller;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.moodtracker.R;
+import com.example.moodtracker.model.DayDate;
 import com.example.moodtracker.model.Mood;
-
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -29,8 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Mood mCurrentMood;
 
     public static final int SWIPE_THRESHOLD = 100;
-    private float downY;
-    private float upY;
+    private float mDownY;
+    private float mUpY;
 
     private String mComment = "";
 
@@ -38,9 +34,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditPreferences;
 
+    public static final String CURRENTMOOD = "MOOD";
+    public static final String CURRENTCOMMENT = "COMMENT";
     public static final String[] DAYS = {"DAY0", "DAY1", "DAY2", "DAY3", "DAY4", "DAY5", "DAY6"};
-    public static final String[] NOTE = {"NOTE0", "NOTE1", "NOTE2", "NOTE3", "NOTE4", "NOTE5", "NOTE6"};
-
+    public static final String[] COMMENTS = {"COMMENT0", "COMMENT1", "COMMENT2", "COMMENT3", "COMMENT4", "COMMENT5", "COMMENT6"};
+    public static final String SAVEDATE = "DATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,59 +54,52 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditPreferences = mPreferences.edit();
 
+        if (mPreferences.getString(CURRENTMOOD, "").isEmpty())
+            mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
 
-        mEditPreferences.putString(DAYS[0], Mood.SUPER_HAPPY.toString());
-        mEditPreferences.putString(DAYS[1], Mood.NORMAL.toString());
-        mEditPreferences.putString(DAYS[2], Mood.HAPPY.toString());
-        mEditPreferences.putString(DAYS[3], Mood.SUPER_HAPPY.toString());
-        mEditPreferences.putString(DAYS[4], Mood.DISAPPOINTED.toString());
-        mEditPreferences.putString(DAYS[5], Mood.SAD.toString());
-        mEditPreferences.putString(DAYS[6], Mood.HAPPY.toString());
-
-        mEditPreferences.putString(NOTE[1], "Hmmm, pourquoi pas");
-        mEditPreferences.putString(NOTE[3], "Hmmm, Oichi, delicieuse ramen");
-        mEditPreferences.putString(NOTE[5], "Super Pizza, super pizza cette pizza à la sauce tomate qui n'a jamais peur de rien.");
-        mEditPreferences.apply();
+        updateMood(false);
     }
 
-
-    public void clickAddNote(View view) {
+    public void clickAddComment(View view) {
         final EditText comentText = new EditText(this);
-        AlertDialog.Builder builderNote = new AlertDialog.Builder(this);
-        builderNote.setTitle("Note")
+        AlertDialog.Builder builderComment = new AlertDialog.Builder(this);
+        builderComment.setTitle(R.string.comment)
                 .setView(comentText)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mComment = comentText.getText().toString();
+                        mEditPreferences.putString(CURRENTCOMMENT, mComment).apply();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create()
                 .show();
     }
 
     public void clickHistory(View view) {
-        Intent historyActivity = new Intent(MainActivity.this, HistoryActivity.class);
-        startActivity(historyActivity);
+        updateMood(true);
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                downY = event.getY();
+                mDownY = event.getY();
                 return true;
             case MotionEvent.ACTION_UP:
-                upY = event.getY();
-                final float deltaY = downY - upY;
+                updateMood(false);
+                mUpY = event.getY();
+                final float deltaY = mDownY - mUpY;
                 if (deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.Next());
+                    mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
                     displayMood();
                     mComment = "";
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.Prev());
+                    mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
                     displayMood();
                     mComment = "";
                 }
@@ -118,37 +109,56 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
-    public void saveMood(int delay) {
+    public boolean saveMood(int delay, final boolean historyClick) {
         if (delay < 0) {
             AlertDialog.Builder warningDate = new AlertDialog.Builder(this);
-            warningDate.setTitle("Avertissement")
-                    .setMessage("Attention chagement de date manuelle")
-                    .setPositiveButton("Ok",null)
-                            //new DialogInterface.OnClickListener() {
-                        //@Override
-                        //public void onClick(DialogInterface dialog, int which) {
-                       //
-                       // }
-                    //})
+            warningDate.setTitle(R.string.warning)
+                    .setMessage(R.string.warningDate)
+                    .setNegativeButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (historyClick) StartHistoryActivity();
+                                }
+                            })
                     .create()
                     .show();
+            return false;
         } else if (0 < delay && delay <= DAYS.length) {
             for (int i = 0; i < DAYS.length - delay; i++) {
                 mEditPreferences.putString(DAYS[i], mPreferences.getString(DAYS[i + delay], "")).apply();
                 mEditPreferences.remove(DAYS[i + delay]);
-                mEditPreferences.putString(NOTE[i], mPreferences.getString(NOTE[i + delay], "")).apply();
-                mEditPreferences.remove(NOTE[i + delay]);
+                mEditPreferences.putString(COMMENTS[i], mPreferences.getString(COMMENTS[i + delay], "")).apply();
+                mEditPreferences.remove(COMMENTS[i + delay]);
             }
 
-            mEditPreferences.putString(DAYS[DAYS.length - delay], mCurrentMood.toString()).apply();
-            mEditPreferences.putString(NOTE[DAYS.length - delay], mComment).apply();
+            mEditPreferences.putString(DAYS[DAYS.length - delay], mPreferences.getString(CURRENTMOOD, "")).apply();
+            mEditPreferences.putString(COMMENTS[DAYS.length - delay], mPreferences.getString(CURRENTCOMMENT, "")).apply();
 
         } else if (delay > DAYS.length) {
             for (int i = 0; i < DAYS.length; i++) {
                 mEditPreferences.remove(DAYS[i]);
-                mEditPreferences.remove(NOTE[i]);
+                mEditPreferences.remove(COMMENTS[i]);
             }
         }
+        return historyClick;
+    }
+
+    private void StartHistoryActivity() {
+        Intent historyActivity = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(historyActivity);
+    }
+
+    public void updateMood(boolean historyClick) {
+        DayDate newDate = new DayDate();
+        DayDate saveDate = new DayDate();
+
+        String stringDate = mPreferences.getString(SAVEDATE, "");
+        if (!stringDate.isEmpty()) saveDate.parseDayDate(stringDate);
+        mEditPreferences.putString(SAVEDATE, newDate.toString()).apply();
+
+        boolean startHistory = saveMood(saveDate.Between(newDate), historyClick);
+        if (startHistory) StartHistoryActivity();
     }
 
     public void displayMood() {

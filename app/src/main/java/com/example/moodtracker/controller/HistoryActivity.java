@@ -1,19 +1,13 @@
 package com.example.moodtracker.controller;
 
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -22,9 +16,6 @@ import android.widget.Toast;
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.Mood;
 
-import org.w3c.dom.Text;
-
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,15 +37,14 @@ public class HistoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < MainActivity.DAYS.length; i++)
             mMoodList.add(Mood.MOOD_OBJECT.parseMood(mPreferences.getString(MainActivity.DAYS[i],
-                                                     "")));
-        for (int i = 0; i < MainActivity.NOTE.length; i++)
-            mCommentList.add(mPreferences.getString(MainActivity.NOTE[i], ""));
+                    "")));
+        for (int i = 0; i < MainActivity.COMMENTS.length; i++)
+            mCommentList.add(mPreferences.getString(MainActivity.COMMENTS[i], ""));
 
         displayTableLayout();
     }
 
     private void displayTableLayout() {
-
         LayoutInflater inflater = this.getLayoutInflater();
 
         for (int i = 0; i < mMoodList.size(); i++) {
@@ -69,27 +59,38 @@ public class HistoryActivity extends AppCompatActivity {
             row.setWeightSum(5);
 
             LinearLayout rowLinearLayout = row.findViewById(R.id.history_row_linear_layout);
-            TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
-                    0,
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    mood.Weight());
-            rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
-            rowLinearLayout.setBackgroundResource(mood.Color());
-
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
-            date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
 
-            final String comment = mCommentList.get(i);
+            if (!mood.toString().isEmpty()) {
+                TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        mood.Weight());
+                rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
+                rowLinearLayout.setBackgroundResource(mood.Color());
 
-            if (!comment.isEmpty()) {
-                ImageView note = (ImageView) row.findViewById(R.id.history_row_png);
-                note.setImageResource(R.mipmap.ic_comment_black_48px);
-                rowLinearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(HistoryActivity.this, comment, Toast.LENGTH_LONG).show();
-                    }
-                });
+                date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
+
+                final String comment = mCommentList.get(i);
+
+                if (!comment.isEmpty()) {
+                    ImageView note = (ImageView) row.findViewById(R.id.history_row_png);
+                    note.setImageResource(R.mipmap.ic_comment_black_48px);
+                    rowLinearLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(HistoryActivity.this, comment, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            } else {
+                TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        Mood.SUPER_HAPPY.Weight());
+                rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
+
+                date.setText(R.string.noMood);
             }
             mTableLayout.addView(row);
         }

@@ -1,5 +1,9 @@
 package com.example.moodtracker.model;
 
+import android.support.annotation.NonNull;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,11 +34,30 @@ public class DayDate {
         return mDate;
     }
 
-    public DayDate addNumberOfDay(int numberOfDay) {
+    @Override
+    public String toString() {
+        SimpleDateFormat simpleDateFormat = (SimpleDateFormat) SimpleDateFormat.getDateInstance();
+        return simpleDateFormat.format(mDate);
+    }
+
+    public void parseDayDate(String formatDayDate) {
+        SimpleDateFormat simpleDateFormat = (SimpleDateFormat) SimpleDateFormat.getDateInstance();
+        try {
+            mDate = simpleDateFormat.parse(formatDayDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isEqualsTo(@NonNull DayDate dayDate) {
+        return toString().equals(dayDate.toString());
+    }
+
+    public void addNumberOfDay(int numberOfDay) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
         calendar.add(Calendar.DATE, numberOfDay);
-        return new DayDate(calendar.getTime());
+        mDate = calendar.getTime();
     }
 
     public int Between(DayDate date) {
@@ -48,15 +71,10 @@ public class DayDate {
             dateEnd = this;
             sign = false;
         }
-
-        while (!dateStart.equals(dateEnd)) {
-            dateStart = dateStart.addNumberOfDay(1);
+        while (!dateStart.isEqualsTo(dateEnd)) {
+            dateStart.addNumberOfDay(1);
             result++;
         }
-
-        if (sign)
-            return result;
-        else
-            return -result;
+        return (sign) ? result : -result;
     }
 }

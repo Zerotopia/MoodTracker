@@ -14,6 +14,6 @@
     <string name="cancel">Annuler</string>
     <string name="warning">Avertissement !</string>
     <string name="warningDate">Attention ! Changer la date de votre appareil manuellement pourrait compromettre la sauvegarde de votre historique.</string>
-    <string name="noMood">Vous n\'avez pas enregistré d\'humeur ce jour ci. MoodTracker est triste :'(</string>
+    <string name="noMood">Vous n\'avez pas enregistré d\'humeur ce jour ci. MoodTracker est triste :\'(</string>
 
 </resources>

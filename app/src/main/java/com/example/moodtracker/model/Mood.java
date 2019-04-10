@@ -126,5 +126,22 @@ public enum Mood {
                 return "";
         }
     }
+
+    public int Sound() {
+        switch (mIdMood) {
+            case "SAD":
+                return 0;
+            case "DISAPPOINTED":
+                return 1;
+            case "NORMAL":
+                return 2;
+            case "HAPPY":
+                return 3;
+            case "SUPER_HAPPY":
+                return 4;
+            default:
+                return 0;
+        }
+    }
 }
 

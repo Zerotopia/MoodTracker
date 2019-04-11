@@ -2,11 +2,6 @@ package com.example.moodtracker.controller;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -20,8 +15,7 @@ import android.widget.RelativeLayout;
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.DayDate;
 import com.example.moodtracker.model.Mood;
-
-
+import com.example.moodtracker.model.MusicSound;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -34,14 +28,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private float mDownY;
     private float mUpY;
 
-    private String mComment = "";
-
-    private SoundPool mSoubPool;
-    private int[] sound = {0, 0, 0, 0, 0};
+    private MusicSound mMusicSound;
+   // private int[] sound = {0, 0, 0, 0, 0};
 
     //We use SharedPreferences variable for history activity
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditPreferences;
+ //   private SharedPreferences mPreferences;
+    //private SharedPreferences.Editor mEditPreferences;
+
+    private DataManager mDataManager;
 
     public static final String CURRENTMOOD = "MOOD";
     public static final String CURRENTCOMMENT = "COMMENT";
@@ -60,40 +54,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mCurrentMood = Mood.HAPPY;
         displayMood();
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditPreferences = mPreferences.edit();
+        mDataManager = new DataManager(PreferenceManager.getDefaultSharedPreferences(this));
+        //mPreferences = mDataManager.getPreferences();
 
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AudioAttributes attrs = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build();
-
-            mSoubPool = new SoundPool.Builder()
-                    .setMaxStreams(1)
-                    .setAudioAttributes(attrs)
-                    .build();
-        }
-
-        else {
-            mSoubPool = new SoundPool(1, AudioManager.STREAM_MUSIC,0);
-        }
-
-        sound[0] = mSoubPool.load(this, R.raw.e,1);
-        sound[1] = mSoubPool.load(this, R.raw.f,1);
-        sound[2] = mSoubPool.load(this, R.raw.b,1);
-        sound[3] = mSoubPool.load(this, R.raw.a,1);
-        sound[4] = mSoubPool.load(this, R.raw.c,1);
-
-        //sound =
-
-            if (mPreferences.getString(CURRENTMOOD, "").isEmpty())
-            mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
-
+        mMusicSound = new MusicSound();
+        mMusicSound.loadNotes(this);
 
         updateMood(false);
+
+        mDataManager.putMood(CURRENTMOOD,mCurrentMood);
+
+
     }
 
     public void clickAddComment(View view) {
@@ -104,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mComment = comentText.getText().toString();
-                        mEditPreferences.putString(CURRENTCOMMENT, mComment).apply();
+                        mDataManager.putComment(CURRENTCOMMENT,comentText.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
@@ -128,27 +98,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 mUpY = event.getY();
                 final float deltaY = mDownY - mUpY;
                 if (deltaY > SWIPE_THRESHOLD) {
-                    mCurrentMood = Mood.valueOf(mCurrentMood.Next());
-                    mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
-
-
-
-                    mSoubPool.play(sound[mCurrentMood.Sound()],1,1,0,0,1);
-
+                    mCurrentMood = Mood.valueOf(mCurrentMood.next());
+                    mDataManager.putMood(CURRENTMOOD,mCurrentMood);
+                    mDataManager.putComment(CURRENTCOMMENT,"");
+                    mMusicSound.playNote(mCurrentMood);
                     displayMood();
-                    mComment = "";
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
-                    mCurrentMood = Mood.valueOf(mCurrentMood.Prev());
-                    mEditPreferences.putString(CURRENTMOOD, mCurrentMood.toString()).apply();
-
-
-
-
-
-                    mSoubPool.play(sound[mCurrentMood.Sound()],1,1,0,0,1);
+                    mCurrentMood = Mood.valueOf(mCurrentMood.prev());
+                    mDataManager.putMood(CURRENTMOOD,mCurrentMood);
+                    mDataManager.putComment(CURRENTCOMMENT,"");
+                    mMusicSound.playNote(mCurrentMood);
                     displayMood();
-                    mComment = "";
                 }
                 return true;
             default:
@@ -156,8 +117,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
+    public void updateMood(boolean historyClick) {
+        DayDate newDate = new DayDate();
+        DayDate saveDate = new DayDate();
+
+        String stringDate = mDataManager.getString(SAVEDATE, "");
+        if (!stringDate.isEmpty()) saveDate.parseDayDate(stringDate);
+        mDataManager.putDayDate(SAVEDATE,newDate);
+
+        boolean startHistory = saveMood(saveDate.Between(newDate), historyClick);
+        if (startHistory) StartHistoryActivity();
+    }
+
     public boolean saveMood(int delay, final boolean historyClick) {
-        if (delay < 0) {
+        if (mDataManager.shiftList(DAYS, delay) || mDataManager.shiftList(COMMENTS, delay)) {
             AlertDialog.Builder warningDate = new AlertDialog.Builder(this);
             warningDate.setTitle(R.string.warning)
                     .setMessage(R.string.warningDate)
@@ -171,22 +144,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     .create()
                     .show();
             return false;
-        } else if (0 < delay && delay <= DAYS.length) {
-            for (int i = 0; i < DAYS.length - delay; i++) {
-                mEditPreferences.putString(DAYS[i], mPreferences.getString(DAYS[i + delay], "")).apply();
-                mEditPreferences.remove(DAYS[i + delay]);
-                mEditPreferences.putString(COMMENTS[i], mPreferences.getString(COMMENTS[i + delay], "")).apply();
-                mEditPreferences.remove(COMMENTS[i + delay]);
-            }
-
-            mEditPreferences.putString(DAYS[DAYS.length - delay], mPreferences.getString(CURRENTMOOD, "")).apply();
-            mEditPreferences.putString(COMMENTS[DAYS.length - delay], mPreferences.getString(CURRENTCOMMENT, "")).apply();
-
-        } else if (delay > DAYS.length) {
-            for (int i = 0; i < DAYS.length; i++) {
-                mEditPreferences.remove(DAYS[i]);
-                mEditPreferences.remove(COMMENTS[i]);
-            }
+        } else {
+            int position = DAYS.length - delay;
+            mDataManager.copyInList(DAYS, CURRENTMOOD, position);
+            mDataManager.copyInList(COMMENTS, CURRENTCOMMENT, position);
+            mDataManager.putComment(CURRENTCOMMENT,"");
         }
         return historyClick;
     }
@@ -196,20 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         startActivity(historyActivity);
     }
 
-    public void updateMood(boolean historyClick) {
-        DayDate newDate = new DayDate();
-        DayDate saveDate = new DayDate();
-
-        String stringDate = mPreferences.getString(SAVEDATE, "");
-        if (!stringDate.isEmpty()) saveDate.parseDayDate(stringDate);
-        mEditPreferences.putString(SAVEDATE, newDate.toString()).apply();
-
-        boolean startHistory = saveMood(saveDate.Between(newDate), historyClick);
-        if (startHistory) StartHistoryActivity();
-    }
-
     public void displayMood() {
-        mRelativeLayout.setBackgroundResource(mCurrentMood.Color());
-        mImageMood.setImageResource(mCurrentMood.Smiley());
+        mRelativeLayout.setBackgroundResource(mCurrentMood.color());
+        mImageMood.setImageResource(mCurrentMood.smiley());
     }
 }

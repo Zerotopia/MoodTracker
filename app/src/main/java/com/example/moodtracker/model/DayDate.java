@@ -20,16 +20,6 @@ public class DayDate {
         mDate = calendar.getTime();
     }
 
-    public DayDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.setTime(date);
-        mDate = calendar.getTime();
-    }
-
     public Date getDate() {
         return mDate;
     }

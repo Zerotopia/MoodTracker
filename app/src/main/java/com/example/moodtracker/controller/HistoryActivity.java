@@ -1,9 +1,8 @@
 package com.example.moodtracker.controller;
 
-import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,7 +21,7 @@ import java.util.List;
 public class HistoryActivity extends AppCompatActivity {
 
     private TableLayout mTableLayout;
-    private SharedPreferences mPreferences;
+    private DataManager mDataManager;
 
     private List<Mood> mMoodList = new ArrayList<>();
     private List<String> mCommentList = new ArrayList<>();
@@ -33,13 +32,15 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         mTableLayout = (TableLayout) findViewById(R.id.activity_history_table_layout);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mDataManager = new DataManager(PreferenceManager.getDefaultSharedPreferences(this));
 
         for (int i = 0; i < MainActivity.DAYS.length; i++)
-            mMoodList.add(Mood.MOOD_OBJECT.parseMood(mPreferences.getString(MainActivity.DAYS[i],
+            mMoodList.add(Mood.MOOD_OBJECT.parseMood(mDataManager.getString(MainActivity.DAYS[i],
                     "")));
+        //mMoodList.add(Mood.HAPPY.parseMood(mDataManager.getString(MainActivity.DAYS[i],
+          //      "")));
         for (int i = 0; i < MainActivity.COMMENTS.length; i++)
-            mCommentList.add(mPreferences.getString(MainActivity.COMMENTS[i], ""));
+            mCommentList.add(mDataManager.getString(MainActivity.COMMENTS[i], ""));
 
         displayTableLayout();
     }
@@ -61,14 +62,14 @@ public class HistoryActivity extends AppCompatActivity {
             LinearLayout rowLinearLayout = row.findViewById(R.id.history_row_linear_layout);
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
 
-            if (!mood.toString().isEmpty()) {
                 TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
                         0,
                         TableRow.LayoutParams.MATCH_PARENT,
-                        mood.Weight());
+                        mood.weight());
                 rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
-                rowLinearLayout.setBackgroundResource(mood.Color());
+                rowLinearLayout.setBackgroundResource(mood.color());
 
+            if (!mood.toString().isEmpty()) {
                 date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
 
                 final String comment = mCommentList.get(i);
@@ -83,15 +84,8 @@ public class HistoryActivity extends AppCompatActivity {
                         }
                     });
                 }
-            } else {
-                TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
-                        0,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        Mood.SUPER_HAPPY.Weight());
-                rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
-
-                date.setText(R.string.noMood);
             }
+            else date.setText(R.string.noMood);
             mTableLayout.addView(row);
         }
     }

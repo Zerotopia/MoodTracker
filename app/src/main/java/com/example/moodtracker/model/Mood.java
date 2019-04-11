@@ -42,7 +42,7 @@ public enum Mood {
         }
     }
 
-    public int Smiley() {
+    public int smiley() {
         switch (mIdMood) {
             case "SAD":
                 return R.mipmap.smiley_sad;
@@ -59,7 +59,7 @@ public enum Mood {
         }
     }
 
-    public int Color() {
+    public int color() {
         switch (mIdMood) {
             case "SAD":
                 return R.color.faded_red;
@@ -76,7 +76,7 @@ public enum Mood {
         }
     }
 
-    public float Weight() {
+    public float weight() {
         switch (mIdMood) {
             case "SAD":
                 return 1;
@@ -89,11 +89,11 @@ public enum Mood {
             case "SUPER_HAPPY":
                 return 5;
             default:
-                return 0;
+                return 5;
         }
     }
 
-    public String Prev() {
+    public String prev() {
         switch (mIdMood) {
             case "SAD":
                 return "SAD";
@@ -110,7 +110,7 @@ public enum Mood {
         }
     }
 
-    public String Next() {
+    public String next() {
         switch (mIdMood) {
             case "SAD":
                 return "DISAPPOINTED";
@@ -127,7 +127,7 @@ public enum Mood {
         }
     }
 
-    public int Sound() {
+    public int sound() {
         switch (mIdMood) {
             case "SAD":
                 return 0;

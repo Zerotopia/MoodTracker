@@ -113,18 +113,22 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 mUpY = event.getY();
                 final float deltaY = mDownY - mUpY;
                 if (deltaY > SWIPE_THRESHOLD) {
-                    mCurrentMood = Mood.valueOf(mCurrentMood.next());
-                    mDataManager.putMood(CURRENTMOOD, mCurrentMood);
-                    mDataManager.clearString(CURRENTCOMMENT);
-                    mMusicSound.playNote(mCurrentMood);
-                    displayMood();
+                    if (!mCurrentMood.equals(Mood.SUPER_HAPPY)) {
+                        mCurrentMood = Mood.valueOf(mCurrentMood.next());
+                        mDataManager.putMood(CURRENTMOOD, mCurrentMood);
+                        mDataManager.clearString(CURRENTCOMMENT);
+                        mMusicSound.playNote(mCurrentMood);
+                        displayMood();
+                    }
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
-                    mCurrentMood = Mood.valueOf(mCurrentMood.prev());
-                    mDataManager.putMood(CURRENTMOOD, mCurrentMood);
-                    mDataManager.clearString(CURRENTCOMMENT);
-                    mMusicSound.playNote(mCurrentMood);
-                    displayMood();
+                    if (!mCurrentMood.equals(Mood.SAD)) {
+                        mCurrentMood = Mood.valueOf(mCurrentMood.prev());
+                        mDataManager.putMood(CURRENTMOOD, mCurrentMood);
+                        mDataManager.clearString(CURRENTCOMMENT);
+                        mMusicSound.playNote(mCurrentMood);
+                        displayMood();
+                    }
                 }
                 return true;
             default:

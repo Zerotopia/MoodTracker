@@ -35,10 +35,14 @@ public class DataManager {
             }
         }
         else if (shift > keyList.length) {
-            for (int i = 0; i < keyList.length; i++)
-                mEditPreferences.remove(keyList[i]);
+            for (String key : keyList)
+                mEditPreferences.remove(key);
         }
         return false;
+    }
+
+    public void clearString (String key) {
+        mEditPreferences.putString(key, "");
     }
 
     public void putMood (String key, Mood mood) {

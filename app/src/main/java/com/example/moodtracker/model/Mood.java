@@ -9,7 +9,7 @@ public enum Mood {
     NORMAL("NORMAL"),
     HAPPY("HAPPY"),
     SUPER_HAPPY("SUPER_HAPPY"),
-    MOOD_OBJECT("");
+    EMPTY_MOOD("");
 
     private String mIdMood;
 
@@ -23,7 +23,7 @@ public enum Mood {
     }
 
     public Mood parseMood(String idMood) {
-        if (idMood == null) return MOOD_OBJECT;
+        if (idMood == null) return EMPTY_MOOD;
         else {
             switch (idMood) {
                 case "SAD":
@@ -37,7 +37,7 @@ public enum Mood {
                 case "SUPER_HAPPY":
                     return SUPER_HAPPY;
                 default:
-                    return MOOD_OBJECT;
+                    return EMPTY_MOOD;
             }
         }
     }

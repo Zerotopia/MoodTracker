@@ -35,10 +35,8 @@ public class HistoryActivity extends AppCompatActivity {
         mDataManager = new DataManager(PreferenceManager.getDefaultSharedPreferences(this));
 
         for (int i = 0; i < MainActivity.DAYS.length; i++)
-            mMoodList.add(Mood.MOOD_OBJECT.parseMood(mDataManager.getString(MainActivity.DAYS[i],
+            mMoodList.add(Mood.EMPTY_MOOD.parseMood(mDataManager.getString(MainActivity.DAYS[i],
                     "")));
-        //mMoodList.add(Mood.HAPPY.parseMood(mDataManager.getString(MainActivity.DAYS[i],
-          //      "")));
         for (int i = 0; i < MainActivity.COMMENTS.length; i++)
             mCommentList.add(mDataManager.getString(MainActivity.COMMENTS[i], ""));
 
@@ -62,12 +60,12 @@ public class HistoryActivity extends AppCompatActivity {
             LinearLayout rowLinearLayout = row.findViewById(R.id.history_row_linear_layout);
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
 
-                TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
-                        0,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        mood.weight());
-                rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
-                rowLinearLayout.setBackgroundResource(mood.color());
+            TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    mood.weight());
+            rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
+            rowLinearLayout.setBackgroundResource(mood.color());
 
             if (!mood.toString().isEmpty()) {
                 date.setText(getResources().getStringArray(R.array.day_sentences)[i]);
@@ -84,8 +82,7 @@ public class HistoryActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }
-            else date.setText(R.string.noMood);
+            } else date.setText(R.string.noMood);
             mTableLayout.addView(row);
         }
     }

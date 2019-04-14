@@ -20,22 +20,23 @@ import com.example.moodtracker.model.MusicSound;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
+    private static final String BUNDLE_STATE_MOOD = "BUNDLE_MOOD";
     private ImageView mImageMood;
     private RelativeLayout mRelativeLayout;
+
     private Mood mCurrentMood;
+    private boolean mNotRotated;
 
     public static final int SWIPE_THRESHOLD = 100;
     private float mDownY;
     private float mUpY;
 
     private MusicSound mMusicSound;
-   // private int[] sound = {0, 0, 0, 0, 0};
-
-    //We use SharedPreferences variable for history activity
- //   private SharedPreferences mPreferences;
-    //private SharedPreferences.Editor mEditPreferences;
-
     private DataManager mDataManager;
+
+    public static final int ONCREATE = 0;
+    public static final int CLICKHISTORY = 1;
+    public static final int ONTOUCH = 2;
 
     public static final String CURRENTMOOD = "MOOD";
     public static final String CURRENTCOMMENT = "COMMENT";
@@ -51,20 +52,33 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mImageMood = (ImageView) findViewById(R.id.activity_main_mood_imgw);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.activity_main_layout);
         mRelativeLayout.setOnTouchListener(this);
-        mCurrentMood = Mood.HAPPY;
-        displayMood();
 
-        mDataManager = new DataManager(PreferenceManager.getDefaultSharedPreferences(this));
-        //mPreferences = mDataManager.getPreferences();
+        if (savedInstanceState == null) {
+            mCurrentMood = Mood.HAPPY;
+            mNotRotated = true;
+        } else {
+            mCurrentMood = Mood.valueOf(savedInstanceState.getString(BUNDLE_STATE_MOOD));
+            mNotRotated = false;
+        }
 
         mMusicSound = new MusicSound();
         mMusicSound.loadNotes(this);
 
-        updateMood(false);
+        mDataManager = new DataManager(PreferenceManager.getDefaultSharedPreferences(this));
 
-        mDataManager.putMood(CURRENTMOOD,mCurrentMood);
+        updateMood(ONCREATE);
+    }
 
+    @Override
+    protected void onStart() {
+        displayMood();
+        super.onStart();
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(BUNDLE_STATE_MOOD, mCurrentMood.toString());
+        super.onSaveInstanceState(outState);
     }
 
     public void clickAddComment(View view) {
@@ -75,16 +89,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mDataManager.putComment(CURRENTCOMMENT,comentText.getText().toString());
+                        mDataManager.putComment(CURRENTCOMMENT, comentText.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
+                .setCancelable(false)
                 .create()
                 .show();
     }
 
     public void clickHistory(View view) {
-        updateMood(true);
+        updateMood(CLICKHISTORY);
     }
 
     @Override
@@ -94,20 +109,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 mDownY = event.getY();
                 return true;
             case MotionEvent.ACTION_UP:
-                updateMood(false);
+                updateMood(ONTOUCH);
                 mUpY = event.getY();
                 final float deltaY = mDownY - mUpY;
                 if (deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.next());
-                    mDataManager.putMood(CURRENTMOOD,mCurrentMood);
-                    mDataManager.putComment(CURRENTCOMMENT,"");
+                    mDataManager.putMood(CURRENTMOOD, mCurrentMood);
+                    mDataManager.clearString(CURRENTCOMMENT);
                     mMusicSound.playNote(mCurrentMood);
                     displayMood();
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
                     mCurrentMood = Mood.valueOf(mCurrentMood.prev());
-                    mDataManager.putMood(CURRENTMOOD,mCurrentMood);
-                    mDataManager.putComment(CURRENTCOMMENT,"");
+                    mDataManager.putMood(CURRENTMOOD, mCurrentMood);
+                    mDataManager.clearString(CURRENTCOMMENT);
                     mMusicSound.playNote(mCurrentMood);
                     displayMood();
                 }
@@ -117,15 +132,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
-    public void updateMood(boolean historyClick) {
+    public void updateMood(int callFrom) {
         DayDate newDate = new DayDate();
         DayDate saveDate = new DayDate();
 
         String stringDate = mDataManager.getString(SAVEDATE, "");
         if (!stringDate.isEmpty()) saveDate.parseDayDate(stringDate);
-        mDataManager.putDayDate(SAVEDATE,newDate);
+        mDataManager.putDayDate(SAVEDATE, newDate);
 
-        boolean startHistory = saveMood(saveDate.Between(newDate), historyClick);
+        int delay = saveDate.Between(newDate);
+        boolean startHistory = saveMood(delay, (callFrom == CLICKHISTORY));
+
+        if (callFrom == ONCREATE) {
+            if (delay != 0) {
+                if (mNotRotated) {
+                    mCurrentMood = Mood.HAPPY;
+                    mDataManager.putMood(CURRENTMOOD, mCurrentMood);
+                }
+            } else {
+                String currenrMood = mDataManager.getString(CURRENTMOOD, "");
+                if (!currenrMood.isEmpty()) mCurrentMood = Mood.valueOf(currenrMood);
+            }
+        }
+
         if (startHistory) StartHistoryActivity();
     }
 
@@ -148,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             int position = DAYS.length - delay;
             mDataManager.copyInList(DAYS, CURRENTMOOD, position);
             mDataManager.copyInList(COMMENTS, CURRENTCOMMENT, position);
-            mDataManager.putComment(CURRENTCOMMENT,"");
+            if (delay != 0) mDataManager.clearString(CURRENTCOMMENT);
         }
         return historyClick;
     }

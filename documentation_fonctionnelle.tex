@@ -21,10 +21,7 @@
 
 \begin{document}
 
-
 \maketitle
-
-
 \newpage
 \renewcommand{\contentsname}{Sommaire}
 \tableofcontents
@@ -38,7 +35,7 @@ et de consulter l'historique de ses humeurs sur les sept derniers jours.
 Nous appellerons :
 
 \begin{itemize}
-\item Activité principale : l'activité qui permet à l'utilisateur
+\item Activité principale : l'activité qui permet à l'utilisatrice
   de sélectionner l'humeur du jour.
 \item Activité d'historique: l'activité qui consiste à mémoriser et
   à afficher l'humeur des sept derniers jours de l'utilisateur.
@@ -51,7 +48,7 @@ supérieur où égal à la version 4.4.
 
 \section{Fonctionnalités de l'activité principale}
 
-L'activité principale permet à l'utilisateur de choisir son humeur du jour parmi
+L'activité principale permet à l'utilisatrice de choisir son humeur du jour parmi
 les cinq humeurs suivantes :
 
 \begin{itemize}
@@ -113,31 +110,31 @@ sur l'écran vers le haut ou vers le bas (voir la figure~\ref{listhumeur}) :
   \label{listhumeur}
 \end{figure}
 
-Chaque fois que l'utilisateur selectionne une nouvelle humeur, une note de musique est jouée. Plus l'humeur est joyeuse plus la note jouée est aigüe.
+Chaque fois que l'utilisatrice sélectionne une nouvelle humeur, une note de musique est jouée. Plus l'humeur est joyeuse plus la note jouée est aigüe.
 
 Lorsque l'utilisateur utilise l'application pour la première fois de la journée,
-l'humeur \og{}Bonne humeur\fg{} s'affiche par defaut. Sinon l'application affiche la dernière humeur déjà sélectionner plus tôt dans la journée par l'utilisateur\footnote{il est à noter que si le passage de minuit se fait pendant que l'utilisateur se sert de l'application, celle-ci affichera au prochain démarrage la dernière humeur selectionnée par l'utilisateur.}.
+l'humeur \og{}Bonne humeur\fg{} s'affiche par defaut. Sinon l'application affiche la dernière humeur déjà sélectionner plus tôt dans la journée par l'utilisatrice\footnote{il est à noter que si le passage de minuit se fait pendant que l'utilisateur se sert de l'application, celle-ci affichera au prochain démarrage la dernière humeur selectionnée par l'utilisatrice.}.
 
 L'interface utilisateur se présente comme sur la figure~\ref{interface}.
 \begin{figure}
   \centering
   \includegraphics[width=.4\textwidth]{interface.png}
-  \caption{Interface utilisateur}
+  \caption{Interface utilisatrice}
   \label{interface}
 \end{figure}
 En bas de l'écran deux boutons sont disponibles :
 \begin{itemize}
-\item Le bouton en bas à gauche ouvre une boîte de dialogue permettant à l'utilisateur d'entrer un commentaire pour expliquer la raison de l'humeur choisie. Ce commentaire pourra être retrouvé dans l'historique. Sélectionne une autre humeur après avoir entrer un commentaire effacera ce dernier. 
-\item Le bouton en bas à droite permet à l'utilisateur de voir l'historique des humeur enregistrées sur les sept derniers jours.
+\item Le bouton en bas à gauche ouvre une boîte de dialogue permettant à l'utilisateur d'entrer un commentaire pour expliquer la raison de l'humeur choisie. Ce commentaire pourra être retrouvé dans l'historique. Sélectionner une autre humeur après avoir entrer un commentaire effacera ce dernier. 
+\item Le bouton en bas à droite permet à l'utilisatrice de voir l'historique des humeurs enregistrées sur les sept derniers jours.
 \end{itemize}
 
 L'application peut s'utiliser en mode portrait ou en mode paysage selon les envies de l'utilisateur.
 
-Pour la bonne construction de l'historique, l'application accède à la date de l'appareil. Donc si l'utilisateur change manuellement la date à une date antérieur, l'application affiche un message d'avertissement annonçant que le changement manuel de la date peut nuire à l'intégrité de l'historique\footnote{Seul les retours en arrière peuvent être détectés.}.
+Pour la bonne construction de l'historique, l'application accède à la date de l'appareil. Donc si l'utilisatrice change manuellement la date à une date antérieure, l'application affiche un message d'avertissement annonçant que le changement manuel de la date peut nuire à l'intégrité de l'historique\footnote{Seul les retours en arrière peuvent être détectés.}.
 
 \section{Fonctionnalité de l'activité d'historique}
 
-Lorsque l'utilisateur click sur le bouton d'accès à l'historique, un nouvel écran s'affiche sur lequel on peut voir les sept dernières humeur enregistrées de la semaine. Une petite icône apparaît les jours où l'utilisateur à laisser un commentaire. En cliquant sur la ligne où une icône apparaît, le commentaire enregistré apparaît en bas de l'écran  (voir la figure~\ref{historique1}).
+Lorsque l'utilisateur clique sur le bouton d'accès à l'historique, un nouvel écran s'affiche sur lequel on peut voir les sept dernières humeurs enregistrées de la semaine. Une petite icône apparaît les jours où l'utilisatrice a laissé un commentaire. En cliquant sur la ligne où une icône est présente, le commentaire enregistré apparaît en bas de l'écran  (voir la figure~\ref{historique1}).
 
 \begin{figure}[!h]
   \centering
@@ -148,7 +145,7 @@ Lorsque l'utilisateur click sur le bouton d'accès à l'historique, un nouvel é
 
 L'application se comporte comme si elle enregistrait l'humeur courante à minuit.
 
-S'il y a des jours où l'utilisateur ne se sert pas de l'application, ils seront indiquer dans l'historique avec un message disant que l'utilisateur n'a pas enregistré d'humeur ce jour-là. La figure~\ref{historique2} montre un exemple où l'utilisateur n'a pas utiliser l'application pendant deux jours.
+S'il y a des jours où l'utilisateur ne se sert pas de l'application, ils seront indiqués dans l'historique avec un message disant que l'utilisatrice n'a pas enregistré d'humeur ce jour-là. La figure~\ref{historique2} montre un exemple où l'utilisateur n'a pas utilisé l'application pendant deux jours.
 
 \begin{figure}
   \centering
@@ -157,7 +154,7 @@ S'il y a des jours où l'utilisateur ne se sert pas de l'application, ils seront
   \label{historique2}
 \end{figure}
 
-Par défaut, lors de la première utilisation, l'historique n'affiche que des lignes indiquant qu'aucune humeur n'a été enregistrée pour le jour indiqué. Ces lignes disparaîtront au fur et à mesure que l'historique se mettra à jour avec les humeurs de l'utilisateur.
+Par défaut, lors de la première utilisation, l'historique n'affiche que des lignes indiquant qu'aucune humeur n'a été enregistrée pour le jour indiqué. Ces lignes disparaîtront au fur et à mesure que l'historique se mettra à jour avec les humeurs de l'utilisatrice.
 
 
 \end{document}

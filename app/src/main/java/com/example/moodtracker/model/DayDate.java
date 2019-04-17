@@ -7,6 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
+/*
+ To know when save a Mood in the history, we see if the date has change
+ since the last time that the user selected a Mood. But in Android a Date
+ has hour, minutes, ...  So in this class we set hour, minutes etc to 0 to
+ havea "Day date" i.e. a date with only relevant information for our application.
+ */
+
 public class DayDate {
 
     private Date mDate;
@@ -50,7 +58,13 @@ public class DayDate {
         mDate = calendar.getTime();
     }
 
-    public int Between(DayDate date) {
+    /*
+    This function compute the number of day between two DayDate.
+    Usage : date1.between(date2)
+    if date1 <= date2 return date2 - date1 (in term of number of day)
+    else return -(date2.between(date1))
+     */
+    public int between(DayDate date) {
         boolean sign = true;
         DayDate dateStart = this;
         DayDate dateEnd = date;

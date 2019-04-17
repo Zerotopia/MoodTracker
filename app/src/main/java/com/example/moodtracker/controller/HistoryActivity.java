@@ -18,11 +18,20 @@ import com.example.moodtracker.model.Mood;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+The only things that do HistoryActivity is to collect information
+in SharedPreferences of user and display it.
+ */
+
 public class HistoryActivity extends AppCompatActivity {
 
     private TableLayout mTableLayout;
     private DataManager mDataManager;
 
+    /*
+    mMoodList is the list of the Moods of the week, and
+    mCommentList is the list of the comments of the week
+     */
     private List<Mood> mMoodList = new ArrayList<>();
     private List<String> mCommentList = new ArrayList<>();
 
@@ -43,6 +52,20 @@ public class HistoryActivity extends AppCompatActivity {
         displayTableLayout();
     }
 
+    /*
+    for (each mood in mMoodList) {
+      We inflate history_row.
+      We fixed the weight of the height of each row to 1 to have all rows with the same height.
+      We fixed the weightSum of each row to 5 to have a different width for each Mood that will be
+      determined by the Mood.weight function.
+      We fixed background color of the row (determined by the Mood.color function)
+      if we have a non empty mood, we set text like "yesterday", or there is two day", etc
+          furthermore if we have acomment, we add the comment icon, and display a toast for the comment
+          (if user click on the row).
+      else we set text that there is no mood saved for thi day.
+      finally we add the row to our tablelayout
+      }
+     */
     private void displayTableLayout() {
         LayoutInflater inflater = this.getLayoutInflater();
 

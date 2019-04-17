@@ -7,6 +7,10 @@ import android.media.SoundPool;
 import android.os.Build;
 
 import com.example.moodtracker.R;
+/*
+SoundPool allows android to play short music file.
+It is use here to play the note for each mood when the user swipe.
+ */
 
 public class MusicSound {
 
@@ -14,6 +18,12 @@ public class MusicSound {
     public static final int[] NOTES = {R.raw.e, R.raw.f, R.raw.a, R.raw.b, R.raw.c};
     private int[] sound = {0, 0, 0, 0, 0};
 
+    /*
+    new SoundPool(...) is deprecated since API 21.
+    The application should be work for API19 and 20 so
+    the constructor MusicSound test the version to determined the good way
+    to construct the SoundPool.
+     */
     public MusicSound() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes attrs = new AudioAttributes.Builder()
@@ -30,7 +40,7 @@ public class MusicSound {
         }
     }
 
-    public void loadNotes (Context context) {
+    public void loadNotes(Context context) {
         for (int i = 0; i < sound.length; i++) {
             sound[i] = mSoundPool.load(context, NOTES[i], 1);
         }

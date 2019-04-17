@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff00796b</color>
+    <color name="default_color">#D7D8DD</color>
 
     <!-- Background colors used for the different moods -->
     <color name="faded_red">#ffde3c50</color>

@@ -2,6 +2,12 @@ package com.example.moodtracker.model;
 
 import com.example.moodtracker.R;
 
+/*
+This class contains all Mood of our application and
+many funtions to link a mood to hits spécifique data,
+like background color, smiley, music sound etc
+ */
+
 public enum Mood {
 
     SAD("SAD"),
@@ -72,10 +78,14 @@ public enum Mood {
             case "SUPER_HAPPY":
                 return R.color.banana_yellow;
             default:
-                return 0;
+                return R.color.default_color;
         }
     }
 
+    /*
+    weight is use to determine the larger of a "mood row" in
+    the historyActivity
+     */
     public float weight() {
         switch (mIdMood) {
             case "SAD":
@@ -93,6 +103,10 @@ public enum Mood {
         }
     }
 
+    /*
+    prev and next function are used to determine
+    the next or previous mood when the user swipe on the screen.
+     */
     public String prev() {
         switch (mIdMood) {
             case "SAD":
@@ -127,6 +141,11 @@ public enum Mood {
         }
     }
 
+    /*
+    The note of music are load in an array.
+    So the sound function return the index of the
+    corresponding note of the array for each mood.
+     */
     public int sound() {
         switch (mIdMood) {
             case "SAD":

@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import com.example.moodtracker.model.DayDate;
 import com.example.moodtracker.model.Mood;
 
+/*
+DataManager manage the Shared Preferences of the user.
+ */
+
 public class DataManager {
 
 
@@ -16,48 +20,81 @@ public class DataManager {
         mEditPreferences = preferences.edit();
     }
 
-    public SharedPreferences getPreferences() {
-        return mPreferences;
-    }
+    /*
+    The Moods and the comments that appear in history are saved in ShardePreference under the key list
+    {DAY0,DAY1,DAY2,...} and {COMMENT0,COMMENT1,COMMENT,...}.
+    copyInList and shiftList are used to update history.
+     */
 
-    public void copyInList (String[] keyList, String key, int position) {
+    /*
+    For exemple if we have SharedPrefeences like this :
+    key   : key0 | key1 | key2 | key3 | otherkey [
+    value :  abc [   de [  fgh [  ijk [      mno [
+
+    with keylist = {key0,key1,key2,key3 }
+             key = otherkey
+        position = 1
+
+    after copyInList(keylist,key,position) we have SharedPreference like this :
+    key   : key0 | key1 | key2 | key3 | otherkey [
+    value :  abc [  mno [  fgh [  ijk [      mno [
+
+     */
+    public void copyInList(String[] keyList, String key, int position) {
         if (0 <= position && position < keyList.length)
-        mEditPreferences.putString(keyList[position],mPreferences.getString(key,"")).apply();
+            mEditPreferences.putString(keyList[position], mPreferences.getString(key, "")).apply();
     }
 
+    /*
+     For exemple if we have SharedPrefeences like this :
+    key   : key0 | key1 | key2 | key3 | key4 [
+    value :  abc [   de [  fgh [  ijk [  mno [
+
+    with keylist = {key0,key1,key2,key3,key4 }
+           shift = 2
+
+    after shiftList(keylist,shift) we have SharedPreference like this :
+    key   : key0 | key1 | key2 | key3 | key4 [
+    value :  fgh [  ijk [  mno [      [      [
+
+     */
     public boolean shiftList(String[] keyList, int shift) {
         if (shift < 0)
             return true;
         else if (0 < shift && shift <= keyList.length) {
             for (int i = 0; i < keyList.length - shift; i++) {
-                copyInList(keyList,keyList[i + shift],i);
+                copyInList(keyList, keyList[i + shift], i);
                 mEditPreferences.remove(keyList[i + shift]);
             }
-        }
-        else if (shift > keyList.length) {
+        } else if (shift > keyList.length) {
             for (String key : keyList)
                 mEditPreferences.remove(key);
         }
         return false;
     }
 
-    public void clearString (String key) {
+    /*
+    Ths following funtions are used to have a more readable code.
+    furthermore thanks to this functions, DataManager is the only class
+    that manipulate directly the Shared Preference.
+     */
+    public void clearString(String key) {
         mEditPreferences.putString(key, "");
     }
 
-    public void putMood (String key, Mood mood) {
-        mEditPreferences.putString(key,mood.toString()).apply();
+    public void putMood(String key, Mood mood) {
+        mEditPreferences.putString(key, mood.toString()).apply();
     }
 
-    public void putDayDate (String key, DayDate dayDate) {
-        mEditPreferences.putString(key,dayDate.toString()).apply();
+    public void putDayDate(String key, DayDate dayDate) {
+        mEditPreferences.putString(key, dayDate.toString()).apply();
     }
 
-    public void putComment (String key, String comment) {
-        mEditPreferences.putString(key,comment).apply();
+    public void putComment(String key, String comment) {
+        mEditPreferences.putString(key, comment).apply();
     }
 
-    public String getString (String key, String defvalue) {
-        return mPreferences.getString(key,defvalue);
+    public String getString(String key, String defvalue) {
+        return mPreferences.getString(key, defvalue);
     }
 }

@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static final int ONCREATE = 0;
     public static final int CLICKHISTORY = 1;
     public static final int ONTOUCH = 2;
-    public static final int ONDESTROY = 3;
     /*
     to manage the rotation of the screen
      */
@@ -68,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mRelativeLayout.setOnTouchListener(this);
 
         if (savedInstanceState == null) {
+            mCurrentMood = Mood.HAPPY;
             mNotRotated = true;
         } else {
             mCurrentMood = Mood.valueOf(savedInstanceState.getString(BUNDLE_STATE_MOOD));
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             if it should be update before to be display)
     -in the method onTouch (to see if the new mood that will be selected is
             the first of a new day or not)
-     So to know which method called updateMood, this method take an integer in parametre
+     So to know which method called updateMood, this method take an integer in parameter
      that determine the parent method.
 
      if updateMood come from onCreate and delay is not null that means this is the first time of
@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     historyClick will have the value true and hence, the historyActivity will start only when the
     user will click on the button of the dialog box.
 
-    If the delay is a positive number then we return the boolean hhistoryClick
+    If the delay is a positive number then we return the boolean historyClick
     (i.e (callFrom == CLICKHISTORY) in updateMood. So if updateMood is call from clickHistory
-    then the historyActivity wil be start.
+    then the historyActivity will be start.
 
     Without this boolean trick, in the case where the AlertDialog appear, the historyActivity
     start and the user has no time to read the warning message.

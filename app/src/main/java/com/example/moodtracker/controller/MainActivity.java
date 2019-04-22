@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static final int ONCREATE = 0;
     public static final int CLICKHISTORY = 1;
     public static final int ONTOUCH = 2;
+    public static final int ONPAUSE = 3;
     /*
     to manage the rotation of the screen
      */
@@ -92,9 +93,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onStart();
     }
 
+    @Override
+    protected void onPause() {
+        updateMood(ONTOUCH);
+        super.onPause();
+    }
+
     /*
-    To manage the rotation of the tablet
-     */
+        To manage the rotation of the tablet
+         */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(BUNDLE_STATE_MOOD, mCurrentMood.toString());

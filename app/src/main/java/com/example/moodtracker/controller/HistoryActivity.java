@@ -1,5 +1,6 @@
 package com.example.moodtracker.controller;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.Mood;
+import com.marcoscg.materialtoast.MaterialToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +103,11 @@ public class HistoryActivity extends AppCompatActivity {
                     rowLinearLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(HistoryActivity.this, comment, Toast.LENGTH_LONG).show();
+                            new MaterialToast(HistoryActivity.this)
+                                    .setMessage(comment)
+                                    .setDuration(Toast.LENGTH_LONG)
+                                    .setBackgroundColor(Color.BLACK)
+                                    .show();
                         }
                     });
                 }

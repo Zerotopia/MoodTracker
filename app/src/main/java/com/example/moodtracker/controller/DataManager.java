@@ -8,7 +8,6 @@ import com.example.moodtracker.model.Mood;
 /**
  * DataManager manage the Shared Preferences of the user.
  */
-
 public class DataManager {
 
 

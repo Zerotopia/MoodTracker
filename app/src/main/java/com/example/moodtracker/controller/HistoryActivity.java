@@ -24,7 +24,6 @@ import java.util.List;
  * The only things that do HistoryActivity is to collect information
  * in SharedPreferences of user and display it.
  */
-
 public class HistoryActivity extends AppCompatActivity {
 
     private TableLayout mTableLayout;
@@ -77,7 +76,7 @@ public class HistoryActivity extends AppCompatActivity {
                     0,
                     1.0f);
             row.setLayoutParams(rowLayoutParams);
-            row.setWeightSum(Mood.values().length);
+            row.setWeightSum(weightMax());
 
             LinearLayout rowLinearLayout = row.findViewById(R.id.history_row_linear_layout);
             TextView date = (TextView) row.findViewById(R.id.history_row_txt);
@@ -98,6 +97,21 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * The width of a row is determine by a weight/weightSum systèm.
+     * The system is disigned to the minimum width of sad mood is at least 1/5 of the
+     * screen width.
+     * If  1 <= moodNumber <= 5 then  different rate of width are 1/moodNumber, 2/moodNumber, ... moodNumber/moodNumber = 1.
+     * If 6 <= moodNumber <= 10 then different rate of width are 2/(moodNumber+1), 3/(moodNumber+1), ... (moodNumber+1)/(moodNumber+1) = 1
+     * If 11 <= moodNumber <= 15 then different rate of width are 3/(moodNumber+2), 4/(moodNumber+2), ... (moodNumber+2)/(moodNumber+2) = 1
+     *
+     * So we see that for each slice of 5 number, weightMax is increment by 1 (moodNumber, moodNumber+1, moodNumber+2, ...)
+     * it is exactly the behavior of the number (moodNumber - 1)/5
+     */
+    private float weightMax () {
+        int moodNumber = Mood.values().length;
+        return (moodNumber + (moodNumber - 1) / 5);
+    }
     /**
      * Just for the sake of readability. If one day the user not used the application,
      * mMoodList contains the value -1, hence a value that is different of -1 means that

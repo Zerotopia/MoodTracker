@@ -12,7 +12,6 @@ import com.example.moodtracker.model.Mood;
  * SoundPool allows android to play short music file.
  * It is use here to play the note for each mood when the user swipe.
  */
-
 public class MusicSound {
 
     private SoundPool mSoundPool;

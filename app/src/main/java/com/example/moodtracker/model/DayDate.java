@@ -14,7 +14,6 @@ import java.util.Date;
  * has hour, minutes, ...  So in this class we set hour, minutes etc to 0 to
  * havea "Day date" i.e. a date with only relevant information for our application.
  */
-
 public class DayDate {
 
     private Date mDate;

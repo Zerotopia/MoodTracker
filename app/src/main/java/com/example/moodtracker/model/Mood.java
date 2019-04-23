@@ -7,16 +7,14 @@ import com.example.moodtracker.R;
  * many funtions to link a mood to hits spécifique data,
  * like background color, smiley, music sound etc
  */
-
-/**
- * ! ! WARNING ! !
- * It is important that Moods are sorted from sadder to happier
- * moreover Data arrays (SMILEYS,COLORS, and NOTES) should be
- * "sorted" of the same manner (i.e smyleys are sorted from sadder to happier,
- * corresponding colors and notes too).
- */
 public enum Mood {
-
+    /**
+     * ! ! WARNING ! !
+     * It is important that Moods are sorted from sadder to happier
+     * moreover Data arrays (SMILEYS,COLORS, and NOTES) should be
+     * "sorted" of the same manner (i.e smyleys are sorted from sadder to happier,
+     * corresponding colors and notes too).
+     */
     SAD,
     DISAPPOINTED,
     NORMAL,
@@ -38,6 +36,7 @@ public enum Mood {
      * the historyActivity. weight is define such that the width of
      * the sadder mood is at least 1/5 of the screen width. And
      * such that the width of the happier mood is equals to the screen width.
+     * See the weightMax function of HistoryActivity for more details
      */
     public float weight() {
         return (values().length - 1) / 5 + ordinal() + 1;
@@ -47,7 +46,6 @@ public enum Mood {
      * prev and next function are used to determine
      * the next or previous mood when the user swipe on the screen.
      */
-
     public int prev() {
         if (ordinal() != 0) return ordinal() - 1;
         else return ordinal();

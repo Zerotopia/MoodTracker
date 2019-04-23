@@ -57,7 +57,5 @@ public enum Mood {
         if (ordinal() != (values().length - 1)) return ordinal() + 1;
         else return ordinal();
     }
-
-
 }
 

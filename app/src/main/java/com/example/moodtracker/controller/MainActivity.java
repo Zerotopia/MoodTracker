@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import com.example.moodtracker.R;
 import com.example.moodtracker.model.DayDate;
 import com.example.moodtracker.model.Mood;
-import com.example.moodtracker.model.MusicSound;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -26,30 +25,30 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Mood mCurrentMood;
 
-    /*
-    Variables to perform the swipe
+    /**
+     * Variables to perform the swipe
      */
     public static final int SWIPE_THRESHOLD = 100;
     private float mDownY;
     private float mUpY;
-    /*
-    To play music note
+    /**
+     * To play music note
      */
     private MusicSound mMusicSound;
-    /*
-    To know from where the funtion update is launch
+    /**
+     * To know from where the funtion update is launch
      */
     public static final int ONCREATE = 0;
     public static final int CLICKHISTORY = 1;
     public static final int ONTOUCH = 2;
     public static final int ONPAUSE = 3;
-    /*
-    to manage the rotation of the screen
+    /**
+     * To manage the rotation of the screen
      */
     private static final String BUNDLE_STATE_MOOD = "BUNDLE_MOOD";
     private boolean mNotRotated;
-    /*
-    To manage SharedPreferences
+    /**
+     * To manage SharedPreferences
      */
     private DataManager mDataManager;
     public static final String CURRENTMOOD = "MOOD";
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             mCurrentMood = Mood.HAPPY;
             mNotRotated = true;
         } else {
-            mCurrentMood = Mood.valueOf(savedInstanceState.getString(BUNDLE_STATE_MOOD));
+            mCurrentMood = Mood.values()[savedInstanceState.getInt(BUNDLE_STATE_MOOD)];
             mNotRotated = false;
         }
 
@@ -83,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         updateMood(ONCREATE);
     }
 
-    /*
-    displayMood is in onStart method because if the user comme back to the main activity from the
-    historyActivity, the method onCreated is not recall, but the method onStart is recall.
+    /**
+     * DisplayMood is in onStart method because if the user comme back to the main activity from the
+     * historyActivity, the method onCreated is not recall, but the method onStart is recall.
      */
     @Override
     protected void onStart() {
@@ -93,23 +92,27 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onStart();
     }
 
+    /**
+     * Even if the user don't touch anythings on the application
+     * we should update mood.
+     */
     @Override
     protected void onPause() {
-        updateMood(ONTOUCH);
+        updateMood(ONPAUSE);
         super.onPause();
     }
 
-    /*
-        To manage the rotation of the tablet
-         */
+    /**
+     * To manage the rotation of the tablet
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(BUNDLE_STATE_MOOD, mCurrentMood.toString());
+        outState.putInt(BUNDLE_STATE_MOOD, mCurrentMood.ordinal());
         super.onSaveInstanceState(outState);
     }
 
-    /*
-    The function that allows the user to add a comment about the current mood.
+    /**
+     * The function that allows the user to add a comment about the current mood.
      */
     public void clickAddComment(View view) {
         final EditText comentText = new EditText(this);
@@ -132,8 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         updateMood(CLICKHISTORY);
     }
 
-    /*
-    This function determine the swipe behavior of the application.
+    /**
+     * This function determines the swipe behavior of the application.
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 final float deltaY = mDownY - mUpY;
                 if (deltaY > SWIPE_THRESHOLD) {
                     if (!mCurrentMood.equals(Mood.SUPER_HAPPY)) {
-                        mCurrentMood = Mood.valueOf(mCurrentMood.next());
+                        mCurrentMood = Mood.values()[mCurrentMood.next()];
                         mDataManager.putMood(CURRENTMOOD, mCurrentMood);
                         mDataManager.clearString(CURRENTCOMMENT);
                         mMusicSound.playNote(mCurrentMood);
@@ -156,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 if (-deltaY > SWIPE_THRESHOLD) {
                     if (!mCurrentMood.equals(Mood.SAD)) {
-                        mCurrentMood = Mood.valueOf(mCurrentMood.prev());
+                        mCurrentMood = Mood.values()[mCurrentMood.prev()];
                         mDataManager.putMood(CURRENTMOOD, mCurrentMood);
                         mDataManager.clearString(CURRENTCOMMENT);
                         mMusicSound.playNote(mCurrentMood);
@@ -169,33 +172,33 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
-    /*
-    updateMood is the function that check if the date has changed.
-    if it is the case, updateMood call saveMood that "shift" the history and
-    save the new mood. And do nothing (almost) if the date has'nt changed.
-    updateMood should be called evry time that the user interract with the application i.e :
-    -in the method onCreate when the user launch the application. (to see if a new day has began)
-    -in the method onClickHistory when the user want to display the histrory (to see
-            if it should be update before to be display)
-    -in the method onTouch (to see if the new mood that will be selected is
-            the first of a new day or not)
-     So to know which method called updateMood, this method take an integer in parameter
-     that determine the parent method.
-
-     if updateMood come from onCreate and delay is not null that means this is the first time of
-     the day that the application has been created, so we have two cases :
-     -first cases mNotRotate is true :that mean that the application hasn't been crated by a rotation
-     of the tablet, so the application has been launch for the first time of the day so we define
-     by default the current mood to HAPPY.
-     -second case, the application has been created by a rotation of the tablet, that means that the
-     user has already selected a mood so we do nothing.
-
-     Now if updateMood come from onCreate and the date has no change, we simply get the last mood
-     that the user has selected during the journey.
-
-     If updateMood come from clickHistory then we should to save the current mood if the day has
-     changed before start the historyActivity.
-     See the comment about saveMood to the explanation of the boolean starthistory.
+    /**
+     * updateMood is the function that check if the date has changed.
+     * if it is the case, updateMood call saveMood that "shift" the history and
+     * save the new mood. And do nothing (almost) if the date has'nt changed.
+     * updateMood should be called evry time that the user interract with the application i.e :
+     * -in the method onCreate when the user launch the application. (to see if a new day has began)
+     * -in the method onClickHistory when the user want to display the histrory (to see
+     *     if it should be update before to be display)
+     * -in the method onTouch (to see if the new mood that will be selected is
+     *     the first of a new day or not)
+     * So to know which method called updateMood, this method take an integer in parameter
+     * that determine the parent method.
+     *
+     * if updateMood come from onCreate and delay is not null that means this is the first time of
+     * the day that the application has been created, so we have two cases :
+     * -first cases mNotRotate is true :that mean that the application hasn't been crated by a rotation
+     *     of the tablet, so the application has been launch for the first time of the day so we define
+     *     by default the current mood to HAPPY.
+     * -second case, the application has been created by a rotation of the tablet, that means that the
+     *     user has already selected a mood so we do nothing.
+     *
+     * Now if updateMood come from onCreate and the date has no change, we simply get the last mood
+     * that the user has selected during the journey.
+     *
+     * If updateMood come from clickHistory then we should to save the current mood if the day has
+     * changed before start the historyActivity.
+     * See the comment about saveMood to the explanation of the boolean starthistory.
      */
     public void updateMood(int callFrom) {
         DayDate newDate = new DayDate();
@@ -216,30 +219,31 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     mDataManager.putMood(CURRENTMOOD, mCurrentMood);
                 }
             } else {
-                String currenrMood = mDataManager.getString(CURRENTMOOD, "");
-                if (!currenrMood.isEmpty()) mCurrentMood = Mood.valueOf(currenrMood);
+                int currentMood = mDataManager.getInt(CURRENTMOOD, -1);
+                if (currentMood != -1) mCurrentMood = Mood.values()[currentMood];
             }
         }
     }
 
-    /*
-    saveMood is the method that "shift" the history and save the currentMood.
-    this method use the method shiftList of DataManager.
-    If the delay is a negative number (i.e. shiftList return true) then saveMood display a warning
-    message to prevent of the risque to change manually the date of the tablet.
-    if this warning message appear after a click on the buttonn clickHistory then the boolean
-    historyClick will have the value true and hence, the historyActivity will start only when the
-    user will click on the button of the dialog box.
-
-    If the delay is a positive number then we return the boolean historyClick
-    (i.e (callFrom == CLICKHISTORY) in updateMood. So if updateMood is call from clickHistory
-    then the historyActivity will be start.
-
-    Without this boolean trick, in the case where the AlertDialog appear, the historyActivity
-    start and the user has no time to read the warning message.
+    /**
+     * saveMood is the method that "shift" the history and save the currentMood.
+     * this method use the method shiftList of DataManager.
+     * If the delay is a negative number (i.e. shiftList return true) then saveMood display a warning
+     * message to prevent of the risque to change manually the date of the tablet.
+     * If this warning message appear after a click on the buttonn clickHistory then the boolean
+     * historyClick will have the value true and hence, the historyActivity will start only when the
+     * user will click on the button of the dialog box.
+     *
+     * If the delay is a positive number then we return the boolean historyClick
+     * (i.e (callFrom == CLICKHISTORY) in updateMood. So if updateMood is call from clickHistory
+     * then the historyActivity will be start.
+     *
+     * Without this boolean trick, in the case where the AlertDialog appear, the historyActivity
+     * start and the user has no time to read the warning message.
      */
     public boolean saveMood(int delay, final boolean historyClick) {
-        if (mDataManager.shiftList(DAYS, delay) || mDataManager.shiftList(COMMENTS, delay)) {
+        if (mDataManager.shiftList(DAYS, delay, DataManager.INT) ||
+            mDataManager.shiftList(COMMENTS, delay, DataManager.STRING)) {
             AlertDialog.Builder warningDate = new AlertDialog.Builder(this);
             warningDate.setTitle(R.string.warning)
                     .setMessage(R.string.warningDate)
@@ -255,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             return false;
         } else {
             int position = DAYS.length - delay;
-            mDataManager.copyInList(DAYS, CURRENTMOOD, position);
-            mDataManager.copyInList(COMMENTS, CURRENTCOMMENT, position);
+            mDataManager.copyInList(DAYS, CURRENTMOOD, position, DataManager.INT);
+            mDataManager.copyInList(COMMENTS, CURRENTCOMMENT, position, DataManager.STRING);
             if (delay != 0) mDataManager.clearString(CURRENTCOMMENT);
         }
         return historyClick;

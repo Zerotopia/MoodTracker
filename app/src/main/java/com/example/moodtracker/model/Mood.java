@@ -39,7 +39,7 @@ public enum Mood {
      * See the weightMax function of HistoryActivity for more details
      */
     public float weight() {
-        return (values().length - 1) / 5 + ordinal() + 1;
+        return (values().length - 2) / 4 + ordinal() + 1;
     }
 
     /**

@@ -101,16 +101,23 @@ public class HistoryActivity extends AppCompatActivity {
      * The width of a row is determine by a weight/weightSum systèm.
      * The system is disigned to the minimum width of sad mood is at least 1/5 of the
      * screen width.
-     * If  1 <= moodNumber <= 5 then  different rate of width are 1/moodNumber, 2/moodNumber, ... moodNumber/moodNumber = 1.
-     * If 6 <= moodNumber <= 10 then different rate of width are 2/(moodNumber+1), 3/(moodNumber+1), ... (moodNumber+1)/(moodNumber+1) = 1
-     * If 11 <= moodNumber <= 15 then different rate of width are 3/(moodNumber+2), 4/(moodNumber+2), ... (moodNumber+2)/(moodNumber+2) = 1
      *
-     * So we see that for each slice of 5 number, weightMax is increment by 1 (moodNumber, moodNumber+1, moodNumber+2, ...)
-     * it is exactly the behavior of the number (moodNumber - 1)/5
+     * The idea here is to find the smallest integer n such that (n+1) / (n + moodNumber) >= 1/5
+     * For a such n :
+     *   -The wheightSum of a row (weightMax) will be (moodNumber + n).
+     *   -The weight of the moods are respectivly n+1,n+2,n+3, ..., n + moodNumber.
+     * Hence with a such n :
+     *   -the saddest mood has a width at least equals to 1/5 of the screen (by definition of n)
+     *   -the happiest mood has a width equal to the width of th screen.
+     *
+     * If we solve the inequality we found n = ceil((moodNumber - 5)/4) (with float division)
+     * The formula n = (moodNumber - 2) / 4 (with integer division) gives the same result.
+     * I choosed the second formula since it has a better behavior if moodNumber = 1.
+     * (even if to have only one mood makes no sense for our application ^^)
      */
     private float weightMax () {
         int moodNumber = Mood.values().length;
-        return (moodNumber + (moodNumber - 1) / 5);
+        return (moodNumber + (moodNumber - 2) / 4);
     }
     /**
      * Just for the sake of readability. If one day the user not used the application,

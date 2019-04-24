@@ -23,13 +23,13 @@ public class DataManager {
     }
 
     /**
-     * The Moods and the comments that appear in history are saved in ShardePreference under the key list
+     * The Moods and the comments that appear in history are saved in SharedPreference under the key list
      * {DAY0,DAY1,DAY2,...} and {COMMENT0,COMMENT1,COMMENT,...}.
      * copyInList and shiftList are used to update history.
      */
 
     /**
-     * For exemple if we have SharedPrefeences like this :
+     * For example if we have SharedPreferences like this :
      * key   : key0 | key1 | key2 | key3 | otherkey |
      * value :  abc |   de |  fgh |  ijk |      mno |
      *
@@ -54,7 +54,7 @@ public class DataManager {
 
 
     /**
-     * For exemple if we have SharedPrefeences like this :
+     * For example if we have SharedPreferences like this :
      * key   : key0 | key1 | key2 | key3 | key4 |
      * value :  abc |   de |  fgh |  ijk |  mno |
      *
@@ -81,7 +81,7 @@ public class DataManager {
     }
 
     /**
-     * Ths following funtions are used to have a more readable code.
+     * Ths following functions are used to have a more readable code.
      * furthermore thanks to this functions, DataManager is the only class
      * that manipulate directly the Shared Preference.
      */

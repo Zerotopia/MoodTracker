@@ -4,7 +4,7 @@ import com.example.moodtracker.R;
 
 /**
  * This class contains all Mood of our application and
- * many funtions to link a mood to hits spécifique data,
+ * many functions to link a mood to hits specific data,
  * like background color, smiley, music sound etc
  */
 public enum Mood {
@@ -12,7 +12,7 @@ public enum Mood {
      * ! ! WARNING ! !
      * It is important that Moods are sorted from sadder to happier
      * moreover Data arrays (SMILEYS,COLORS, and NOTES) should be
-     * "sorted" of the same manner (i.e smyleys are sorted from sadder to happier,
+     * "sorted" of the same manner (i.e smileys are sorted from sadder to happier,
      * corresponding colors and notes too).
      */
     SAD,

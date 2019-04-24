@@ -12,7 +12,7 @@ import java.util.Date;
  * To know when save a Mood in the history, we see if the date has change
  * since the last time that the user selected a Mood. But in Android a Date
  * has hour, minutes, ...  So in this class we set hour, minutes etc to 0 to
- * havea "Day date" i.e. a date with only relevant information for our application.
+ * have a "Day date" i.e. a date with only relevant information for our application.
  */
 public class DayDate {
 

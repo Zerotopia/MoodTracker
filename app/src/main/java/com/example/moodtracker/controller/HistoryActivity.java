@@ -61,7 +61,7 @@ public class HistoryActivity extends AppCompatActivity {
      * We fixed the width of the row according to its weight
      * We fixed the background color of the row
      * We set the text of the row like "yesterday", or there is two day", etc
-     * We call the displayComment fucntion that manage the different comments of the week.
+     * We call the displayComment function that manage the different comments of the week.
      * Finally we add the row to our tablelayout
      * }
      */
@@ -84,14 +84,15 @@ public class HistoryActivity extends AppCompatActivity {
             TableRow.LayoutParams rowLinearLayoutParams = new TableRow.LayoutParams(
                     0,
                     TableRow.LayoutParams.MATCH_PARENT,
-                    rowWeight(rowNum));
+                    setRowWeight(rowNum));
             rowLinearLayout.setLayoutParams(rowLinearLayoutParams);
-            rowLinearLayout.setBackgroundResource(rowBackgroundColor(rowNum));
+            rowLinearLayout.setBackgroundResource(setRowBackgroundColor(rowNum));
 
-            date.setText(rowText(rowNum));
+            date.setText(setRowText(rowNum));
 
             ImageView rowComment = (ImageView) row.findViewById(R.id.history_row_png);
-            displayRowComment(rowNum, rowComment, rowLinearLayout);
+            setRowImage(rowNum, rowComment);
+            rowLinearLayout.setOnClickListener(displayRowComment(rowNum));
 
             mTableLayout.addView(row);
         }
@@ -101,24 +102,25 @@ public class HistoryActivity extends AppCompatActivity {
      * The width of a row is determine by a weight/weightSum systèm.
      * The system is disigned to the minimum width of sad mood is at least 1/5 of the
      * screen width.
-     *
+     * <p>
      * The idea here is to find the smallest integer n such that (n+1) / (n + moodNumber) >= 1/5
      * For a such n :
-     *   -The wheightSum of a row (weightMax) will be (moodNumber + n).
-     *   -The weight of the moods are respectivly n+1,n+2,n+3, ..., n + moodNumber.
+     * -The wheightSum of a row (weightMax) will be (moodNumber + n).
+     * -The weight of the moods are respectively n+1,n+2,n+3, ..., n + moodNumber.
      * Hence with a such n :
-     *   -the saddest mood has a width at least equals to 1/5 of the screen (by definition of n)
-     *   -the happiest mood has a width equal to the width of th screen.
-     *
+     * -the saddest mood has a width at least equals to 1/5 of the screen (by definition of n)
+     * -the happiest mood has a width equal to the width of th screen.
+     * <p>
      * If we solve the inequality we found n = ceil((moodNumber - 5)/4) (with float division)
      * The formula n = (moodNumber - 2) / 4 (with integer division) gives the same result.
      * I choosed the second formula since it has a better behavior if moodNumber = 1.
      * (even if to have only one mood makes no sense for our application ^^)
      */
-    private float weightMax () {
+    private float weightMax() {
         int moodNumber = Mood.values().length;
         return (moodNumber + (moodNumber - 2) / 4);
     }
+
     /**
      * Just for the sake of readability. If one day the user not used the application,
      * mMoodList contains the value -1, hence a value that is different of -1 means that
@@ -129,39 +131,40 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     /**
-     * The following functions determine respectivly the backgroundcolor, the weight and the Text
-     * of each row.
+     * The following functions determine respectively the background color, the weight, the text
+     * and the icon of each row.
      */
-    private int rowBackgroundColor(int rowNum) {
+    private int setRowBackgroundColor(int rowNum) {
         int mood = mMoodList.get(rowNum);
         if (moodExists(mood)) return Mood.values()[mood].color();
         else return R.color.default_color;
     }
 
-    private float rowWeight(int rowNum) {
+    private float setRowWeight(int rowNum) {
         int mood = mMoodList.get(rowNum);
         if (moodExists(mood)) return Mood.values()[mood].weight();
         else return Mood.values().length;
     }
 
-    private String rowText(int rowNum) {
+    private String setRowText(int rowNum) {
         int mood = mMoodList.get(rowNum);
         if (moodExists(mood)) return getResources().getStringArray(R.array.day_sentences)[rowNum];
         else return getResources().getString(R.string.noMood);
     }
 
+    private void setRowImage(int rowNum, ImageView ic_row) {
+        if (!mCommentList.get(rowNum).isEmpty())
+            ic_row.setImageResource(R.mipmap.ic_comment_black_48px);
+    }
+
     /**
-     * This function add an icon to inform the user that a comment is registered for this day.
-     * Click on the row display the comment in a Toast.
-     *
+     * This function defines the click behavior of a row if a comment has been saved.
      */
-    private void displayRowComment(int rowNum, ImageView rowComment, LinearLayout rowLinearLayout) {
+    private View.OnClickListener displayRowComment(int rowNum) {
 
         final String comment = mCommentList.get(rowNum);
-
         if (!comment.isEmpty()) {
-            rowComment.setImageResource(R.mipmap.ic_comment_black_48px);
-            rowLinearLayout.setOnClickListener(new View.OnClickListener() {
+            return new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new MaterialToast(HistoryActivity.this)
@@ -170,7 +173,7 @@ public class HistoryActivity extends AppCompatActivity {
                             .setBackgroundColor(Color.BLACK)
                             .show();
                 }
-            });
-        }
+            };
+        } else return null;
     }
 }

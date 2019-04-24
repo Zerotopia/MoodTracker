@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      */
     private MusicSound mMusicSound;
     /**
-     * To know from where the funtion update is launch
+     * To know from where the function update is launch
      */
     public static final int ONCREATE = 0;
     public static final int CLICKHISTORY = 1;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * DisplayMood is in onStart method because if the user comme back to the main activity from the
+     * DisplayMood is in onStart method because if the user come back to the main activity from the
      * historyActivity, the method onCreated is not recall, but the method onStart is recall.
      */
     @Override
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      * updateMood is the function that check if the date has changed.
      * if it is the case, updateMood call saveMood that "shift" the history and
      * save the new mood. And do nothing (almost) if the date has'nt changed.
-     * updateMood should be called evry time that the user interract with the application i.e :
+     * updateMood should be called evry time that the user interact with the application i.e :
      * -in the method onCreate when the user launch the application. (to see if a new day has began)
      * -in the method onClickHistory when the user want to display the histrory (to see
      *     if it should be update before to be display)
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      * this method use the method shiftList of DataManager.
      * If the delay is a negative number (i.e. shiftList return true) then saveMood display a warning
      * message to prevent of the risque to change manually the date of the tablet.
-     * If this warning message appear after a click on the buttonn clickHistory then the boolean
+     * If this warning message appear after a click on the button clickHistory then the boolean
      * historyClick will have the value true and hence, the historyActivity will start only when the
      * user will click on the button of the dialog box.
      *

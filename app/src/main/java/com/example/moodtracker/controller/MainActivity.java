@@ -221,6 +221,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             } else {
                 int currentMood = mDataManager.getInt(CURRENTMOOD, -1);
                 if (currentMood != -1) mCurrentMood = Mood.values()[currentMood];
+                else {
+                    mCurrentMood = Mood.HAPPY;
+                    mDataManager.putMood(CURRENTMOOD,mCurrentMood);
+                }
             }
         }
     }
